@@ -1,0 +1,15 @@
+@use "./_type.scss" as type;
+
+@import url("https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "SF Pro Display", system-ui, sans-serif;
+}
+
+.container {
+  @apply px-5 max-w-[1000px] mx-auto;
+}

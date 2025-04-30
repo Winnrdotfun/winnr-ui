@@ -1,0 +1,47 @@
+* {
+  @apply antialiased;
+}
+
+.heading-h1 {
+  @apply text-2xl font-bold;
+}
+
+.heading-h2 {
+  @apply text-xl font-bold;
+}
+
+.heading-h3 {
+  @apply text-lg font-semibold;
+}
+
+.heading-h4 {
+  @apply text-base font-semibold;
+}
+
+.heading-h5 {
+  @apply text-sm font-semibold;
+}
+
+.heading-h6 {
+  @apply text-xs font-semibold;
+}
+
+.body-lg {
+  @apply text-lg font-medium;
+}
+
+.body-md {
+  @apply text-base font-medium;
+}
+
+.body-sm {
+  @apply text-sm font-medium;
+}
+
+.body-xs {
+  @apply text-xs font-medium;
+}
+
+.capital {
+  @apply text-caps font-medium uppercase tracking-wider;
+}

@@ -1,0 +1,33 @@
+.input {
+  @apply inline-block text-neutral-50 border p-2.5 text-sm border-white/10 rounded-xl w-full bg-transparent duration-300 appearance-none placeholder:text-neutral-500 ring-0 outline-none
+  /* Focus State */
+  focus:border-green-light focus-visible:outline-none focus:ring-0
+  /* On focus uplift the component*/
+  focus:relative focus:z-10
+  /* Disabled State */
+  disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed;
+
+  &::-webkit-contacts-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+
+  &.disabled {
+    @apply text-neutral-500 bg-neutral-800 cursor-not-allowed;
+  }
+
+  &.error {
+    @apply border-red-light focus:border-red-light;
+  }
+
+  &.success {
+    @apply border-green-light focus:border-green-light;
+  }
+
+  &.warning {
+    @apply border-orange-light focus:border-orange-light;
+  }
+}

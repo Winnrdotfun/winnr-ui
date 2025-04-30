@@ -1,0 +1,28 @@
+.btn {
+  @apply h-auto inline-flex rounded-xl items-center justify-center border border-white/20 cursor-pointer align-middle transition duration-300 disabled:cursor-not-allowed font-semibold text-sm;
+}
+
+.lg {
+  @apply py-[14px] px-3 gap-1;
+}
+
+.md {
+  @apply py-3 px-[14px] gap-1;
+}
+
+.sm {
+  @apply py-[8.5px] px-[17.5px] gap-1;
+}
+
+// Variants
+.primary {
+  @apply bg-green-light text-base-black
+  /* Hover State */
+  hover:bg-gradient-primary
+  /* Active State */
+  active:border-white
+  /* Focus State */
+  focus:outline-none focus:border-white
+  /* Disable State */
+  disabled:opacity-50;
+}
