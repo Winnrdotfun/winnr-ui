@@ -13,7 +13,7 @@ module.exports = {
       sm: { max: "639px" },
     },
     fontFamily: {
-      sans: ["SF Pro Rounded", "system-ui", "sans-serif"],
+      sans: ["SFRounded", "system-ui", "sans-serif"],
     },
     fontSize: {
       caps: ["0.625rem", { lineHeight: "0.75rem" }], // 10px

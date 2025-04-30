@@ -1,13 +1,12 @@
 @use "./_type.scss" as type;
-
-@import url("https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap");
+@use "../assets/fonts/fonts.scss" as fonts;
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: "SF Pro Display", system-ui, sans-serif;
+  font-family: "SFRounded", system-ui, sans-serif;
 }
 
 .container {
