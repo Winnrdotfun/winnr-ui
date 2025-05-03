@@ -22,6 +22,8 @@ import { useParams } from "next/navigation";
 import { bnToUiAmount } from "@/src/utils/token";
 import { useTokenPrices } from "@/src/hooks/useTokenPrices";
 import ContestCardDetailsLoading from "../ui/Loading/ContestCardDetailsLoading";
+import { enterTokenDraftContest } from "@/src/api/contest/enterContest";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 
 interface PriceData {
   price: {
@@ -74,6 +76,8 @@ const TOKEN_INFO = [
 
 const ContestCardDetails = () => {
   const pg = useProgram();
+  const { connection } = useConnection();
+  const wallet = useAnchorWallet();
   const params = useParams();
   const [contest, setContest] = useState<Contest | null>(null);
   const [timeLeft, setTimeLeft] = useState<{
@@ -127,6 +131,22 @@ const ContestCardDetails = () => {
   const calculateRoi = (startPrice: number, currentPrice: number) => {
     if (!startPrice || !currentPrice) return 0;
     return ((currentPrice - startPrice) / startPrice) * 100;
+  };
+
+  const handleJoinContest = async () => {
+    if (!pg || !wallet || !connection) return;
+    // setLoading(true);
+    try {
+      await enterTokenDraftContest(pg, connection, wallet, {
+        contestAddress: params.slug as string,
+        creditAllocation: [25, 25, 25, 25], // Example allocation - must sum to 100
+      });
+      // Success message or redirect
+    } catch (error) {
+      console.error("Error joining contest:", error);
+    } finally {
+      // setLoading(false);
+    }
   };
 
   return (
@@ -256,7 +276,12 @@ const ContestCardDetails = () => {
               {timeLeft?.time}
             </span>
           </div>
-          <Button size="sm" iconRight={<ArrowRight />} className="w-full">
+          <Button
+            size="sm"
+            iconRight={<ArrowRight />}
+            className="w-full"
+            onClick={handleJoinContest}
+          >
             Join Contest
           </Button>
         </div>
