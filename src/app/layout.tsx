@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "@/src/styles/globals.scss";
 import Layout from "../components/common/Layout";
+import { ModalsProvider } from "../components/ui/ModalsProvider/ModalsProvider";
+import RootProvider from "./provider";
 
 export const metadata: Metadata = {
   title: "Winner",
@@ -35,7 +37,11 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className={`bg-base-black antialiased`}>
-        <Layout>{children}</Layout>
+        <RootProvider>
+          <ModalsProvider>
+            <Layout>{children}</Layout>
+          </ModalsProvider>
+        </RootProvider>
       </body>
     </html>
   );
