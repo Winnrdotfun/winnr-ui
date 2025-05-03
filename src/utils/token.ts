@@ -3,11 +3,10 @@ import { BN } from "@coral-xyz/anchor";
 export function bnToUiAmount(
   amount: BN,
   decimals: number,
-  numOfDecimals?: number,
-  asString = true
-): string | number {
+  numOfDecimals?: number
+): string {
   if (!amount) {
-    return asString ? "0" : 0;
+    return "0";
   }
 
   // Convert to big decimal string based on decimals
@@ -34,7 +33,7 @@ export function bnToUiAmount(
 
     if (displayDecimals <= 0) {
       // No decimals requested, return just integer part
-      return asString ? integerPart.toString() : integerPart.toNumber();
+      return integerPart.toString();
     } else {
       // Truncate to specified number of decimals
       fractionalPartString = fractionalPartString.substring(0, displayDecimals);
@@ -52,5 +51,5 @@ export function bnToUiAmount(
     result = integerPart.toString();
   }
 
-  return asString ? result : parseFloat(result);
+  return result;
 }
