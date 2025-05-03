@@ -1,3 +1,5 @@
+"use client";
+
 import ContestCard from "@/src/components/Home/ContestCard";
 import ChallengeCard from "@/src/components/Home/ChallengeCard";
 

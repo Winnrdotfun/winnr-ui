@@ -1,3 +1,5 @@
+'use client";';
+
 import Image from "next/image";
 import cup from "@/src/assets/images/cup.png";
 import { ReactComponent as Dollar } from "@/src/assets/icons/dollar.svg";
@@ -6,8 +8,19 @@ import { ReactComponent as USDC } from "@/src/assets/icons/usdc.svg";
 import ProgressBar from "../common/ProgressBar";
 import Button from "../ui/Button/Button";
 import Link from "next/link";
+import { getAllTokenDraftContests } from "@/src/api/contest/getAllContests";
+import { useProgram } from "@/src/hooks/program";
+import { getTokenDraftContestsByAddress } from "@/src/api/contest/getContestByAddress";
 
 const ContestCard = () => {
+  const pg = useProgram();
+
+  getAllTokenDraftContests(pg!).then((res) => console.log("all contests", res));
+  getTokenDraftContestsByAddress(
+    pg!,
+    "6VqhQdJSQSQFd3cc4yRFUj9xoZBog8x5rS32dowEnx37"
+  ).then((res) => console.log("contest by address", res));
+
   return (
     <Link
       href={`/contest/win-draft`}

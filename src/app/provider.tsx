@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider,
@@ -7,13 +8,12 @@ import {
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { UnsafeBurnerWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { useMemo } from "react";
-import { RPC_TESTNET } from "../config/env";
 import "@solana/wallet-adapter-react-ui/styles.css";
+import { RPC_LOCALNET } from "../config/env";
 
 export default function RootProvider(props: { children: React.ReactNode }) {
   const network = WalletAdapterNetwork.Testnet;
-  const endpoint = RPC_TESTNET;
+  const endpoint = RPC_LOCALNET;
 
   const wallets = useMemo(
     () => [new UnsafeBurnerWalletAdapter()],
