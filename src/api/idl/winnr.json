@@ -1,5 +1,5 @@
 {
-  "address": "E35TzkfrR1LoNEevvRFK9frvrFQgSGxN251rvpVrzW2",
+  "address": "EyX7MhEETBxhwuA5yPj5YQyRb1F3DC14FMJMbbxDPvgM",
   "metadata": {
     "name": "protocol",
     "version": "0.1.0",
@@ -439,6 +439,10 @@
     {
       "code": 6011,
       "name": "AlreadyResolved"
+    },
+    {
+      "code": 6012,
+      "name": "NotWinner"
     }
   ],
   "types": [

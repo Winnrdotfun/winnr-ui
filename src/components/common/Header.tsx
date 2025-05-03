@@ -9,7 +9,7 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 const navList = [
   {
     name: "Contest",
-    href: "/contest",
+    href: "/",
   },
   {
     name: "Leaderboard",
@@ -39,7 +39,7 @@ const Header: FC = () => {
             <li key={item.name} className="">
               <Link
                 href={item.href}
-                className={`block py-2.5 px-3 rounded-xl bg-transparent heading-h5 transition-all border ${
+                className={`block py-2.5 px-3 rounded-xl heading-h5 transition-all border ${
                   pathname === item.href
                     ? "text-[#000] bg-green-light border-white/20"
                     : "text-neutral-400 border-neutral-900 hover:text-[#000] hover:bg-green-light hover:border-white/20"

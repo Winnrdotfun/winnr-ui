@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/protocol.json`.
  */
 export type Protocol = {
-  address: "E35TzkfrR1LoNEevvRFK9frvrFQgSGxN251rvpVrzW2";
+  address: "EyX7MhEETBxhwuA5yPj5YQyRb1F3DC14FMJMbbxDPvgM";
   metadata: {
     name: "protocol";
     version: "0.1.0";
@@ -609,6 +609,10 @@ export type Protocol = {
     {
       code: 6011;
       name: "alreadyResolved";
+    },
+    {
+      code: 6012;
+      name: "notWinner";
     }
   ];
   types: [
