@@ -1,5 +1,6 @@
 @use "./_type.scss" as type;
 @use "../assets/fonts/fonts.scss" as fonts;
+@use "./customWallet.scss" as customWallet;
 
 @tailwind base;
 @tailwind components;

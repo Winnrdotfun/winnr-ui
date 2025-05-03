@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactComponent as Logo } from "@/src/assets/images/logo.svg";
-import { ReactComponent as WalletIcon } from "@/src/assets/icons/wallet.svg";
 import { FC } from "react";
-import Button from "../ui/Button/Button";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const navList = [
   {
@@ -51,9 +50,7 @@ const Header: FC = () => {
             </li>
           ))}
         </ul>
-        <Button iconLeft={<WalletIcon />} size="sm">
-          Connect Wallet
-        </Button>
+        <WalletMultiButton />
       </div>
     </div>
   );
