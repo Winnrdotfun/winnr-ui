@@ -3,7 +3,9 @@ import winnrIdl from "./idl/winnr.json";
 
 export const programId = new web3.PublicKey(winnrIdl.address);
 
-export const mint = new web3.PublicKey("");
+export const mint = new web3.PublicKey(
+  "CHFS7ZV7TQuSuGRSfjbGRQ6C3Eb96haSXyMW8pWjTQCc"
+);
 
 export const [configPda] = web3.PublicKey.findProgramAddressSync(
   [Buffer.from("config")],
@@ -16,6 +18,6 @@ export const [contestMetadataPda] = web3.PublicKey.findProgramAddressSync(
 );
 
 export const [programTokenAccountPda] = web3.PublicKey.findProgramAddressSync(
-  [Buffer.from("token_account")],
+  [Buffer.from("token_account"), mint.toBuffer()],
   programId
 );

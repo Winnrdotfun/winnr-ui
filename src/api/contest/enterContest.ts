@@ -16,18 +16,14 @@ export const enterTokenDraftContest = async (
   const contestPda = new PublicKey(contestAddress);
   const [contestEntryPda] = PublicKey.findProgramAddressSync(
     [
-      Buffer.from("contest_entry"),
+      Buffer.from("token_draft_contest_entry"),
       contestPda.toBuffer(),
       wallet.publicKey.toBuffer(),
     ],
     pg.programId
   );
   const [contestCreditsPda] = PublicKey.findProgramAddressSync(
-    [
-      Buffer.from("contest_credits"),
-      contestPda.toBuffer(),
-      wallet.publicKey.toBuffer(),
-    ],
+    [Buffer.from("token_draft_contest_credits"), contestPda.toBuffer()],
     pg.programId
   );
 
