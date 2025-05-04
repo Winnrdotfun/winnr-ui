@@ -3,7 +3,6 @@ import { ReactComponent as Ticket } from "@/src/assets/icons/ticket.svg";
 import { ReactComponent as Candle } from "@/src/assets/icons/candle.svg";
 import { ReactComponent as Error } from "@/src/assets/icons/error.svg";
 import { ReactComponent as USDC } from "@/src/assets/icons/usdc.svg";
-import { ReactComponent as ArrowRight } from "@/src/assets/icons/arrow-right.svg";
 
 const ContestCardDetailsLoading = () => {
   return (

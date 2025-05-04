@@ -24,6 +24,7 @@ import { useTokenPrices } from "@/src/hooks/useTokenPrices";
 import ContestCardDetailsLoading from "../ui/Loading/ContestCardDetailsLoading";
 import { enterTokenDraftContest } from "@/src/api/contest/enterContest";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
+import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
 
 interface PriceData {
   price: {
@@ -83,9 +84,28 @@ const ContestCardDetails = () => {
   const [timeLeft, setTimeLeft] = useState<{
     time: string;
     isEnding: boolean;
+    isStarted: boolean;
+    isEnded: boolean;
   } | null>(null);
+  const [creditAllocations, setCreditAllocations] = useState<number[]>([
+    0, 0, 0, 0,
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasJoined, setHasJoined] = useState<boolean>(false);
 
   const { data: livePrices } = useTokenPrices(contest?.tokenFeedIds || []);
+
+  useEffect(() => {
+    if (pg && params.slug && wallet) {
+      getTokenDraftContestsEntry(pg, {
+        contestAddress: params.slug as string,
+        signerAddress: wallet.publicKey.toBase58(),
+      }).then((entry) => {
+        setHasJoined(entry !== null);
+      });
+    }
+  }, [pg, params.slug, wallet]);
 
   useEffect(() => {
     if (pg && params.slug) {
@@ -106,7 +126,10 @@ const ContestCardDetails = () => {
         const now = new Date().getTime();
         const startTime = contest.startTime;
         const endTime = contest.endTime;
-        const distance = startTime > now ? startTime - now : endTime - now;
+        const isStarted = startTime <= now;
+        const isEnded = endTime <= now;
+        const isEnding = isStarted && !isEnded && endTime - now < 3600000; // Less than 1 hour left
+        const distance = isStarted ? endTime - now : startTime - now;
         const hours = Math.floor(
           (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
         );
@@ -114,7 +137,9 @@ const ContestCardDetails = () => {
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
         setTimeLeft({
           time: `${hours}h : ${minutes}m : ${seconds}s`,
-          isEnding: startTime <= now,
+          isEnding,
+          isStarted,
+          isEnded,
         });
       }, 1000);
       return () => clearInterval(interval);
@@ -133,19 +158,43 @@ const ContestCardDetails = () => {
     return ((currentPrice - startPrice) / startPrice) * 100;
   };
 
+  const handleCreditChange = (index: number, value: string) => {
+    const newValue = value === "" ? 0 : parseInt(value);
+    if (isNaN(newValue) || newValue < 0) return;
+
+    const newAllocations = [...creditAllocations];
+    newAllocations[index] = newValue;
+    setCreditAllocations(newAllocations);
+
+    const total = newAllocations.reduce((sum, val) => sum + val, 0);
+    if (total > 100) {
+      setError("Total allocation cannot exceed 100");
+    } else {
+      setError(null);
+    }
+  };
+
   const handleJoinContest = async () => {
     if (!pg || !wallet || !connection) return;
-    // setLoading(true);
+
+    const total = creditAllocations.reduce((sum, val) => sum + val, 0);
+    if (total !== 100) {
+      setError("Total allocation must be exactly 100");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       await enterTokenDraftContest(pg, connection, wallet, {
         contestAddress: params.slug as string,
-        creditAllocation: [25, 25, 25, 25], // Example allocation - must sum to 100
+        creditAllocation: creditAllocations,
       });
       // Success message or redirect
     } catch (error) {
       console.error("Error joining contest:", error);
+      setError("Failed to join contest. Please try again.");
     } finally {
-      // setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -155,8 +204,28 @@ const ContestCardDetails = () => {
         <div className="flex items-center justify-between gap-2">
           <h3 className="heading-h3 text-neutral-50">Draft &Win</h3>
           <Status
-            title={timeLeft?.isEnding ? "Ending" : "Not Started"}
-            variant="warning"
+            title={
+              contest.isResolved
+                ? "Resolved"
+                : timeLeft?.isEnded
+                ? "Ended"
+                : timeLeft?.isEnding
+                ? "Ending Soon"
+                : timeLeft?.isStarted
+                ? "In Progress"
+                : "Not Started"
+            }
+            variant={
+              contest.isResolved
+                ? "success"
+                : timeLeft?.isEnded
+                ? "error"
+                : timeLeft?.isEnding
+                ? "warning"
+                : timeLeft?.isStarted
+                ? "success"
+                : "warning"
+            }
           />
         </div>
       </div>
@@ -205,7 +274,8 @@ const ContestCardDetails = () => {
         <div className="flex items-center gap-2 justify-between mb-1">
           <div className="text-neutral-50 heading-h5">Allocate credit</div>
           <div className="text-orange-light heading-h6">
-            Credit Balance: 100
+            Credit Balance:{" "}
+            {100 - creditAllocations.reduce((sum, val) => sum + val, 0)}
           </div>
         </div>
         <p className="body-xs text-neutral-500 mb-3">
@@ -257,17 +327,27 @@ const ContestCardDetails = () => {
                   </div>
                 </div>
                 <div className="max-w-[72px]">
-                  <Input placeholder="00" className="text-center" />
+                  <Input
+                    placeholder="00"
+                    className="text-center appearance-none !w-[72px]"
+                    value={creditAllocations[index].toString()}
+                    onChange={(e) => handleCreditChange(index, e.target.value)}
+                    type="number"
+                    min="0"
+                    max="100"
+                  />
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div className="rounded-lg bg-red-light/10 p-2 flex items-center gap-2 body-xs text-red-light">
-          <Error />
-          <span>Allocation can not be empty</span>
-        </div>
+        {error && (
+          <div className="rounded-lg bg-red-light/10 p-2 flex items-center gap-2 body-xs text-red-light">
+            <Error />
+            <span>{error}</span>
+          </div>
+        )}
 
         <div className="mt-5">
           <div className="body-xs text-white/60 mb-3 text-center">
@@ -281,8 +361,13 @@ const ContestCardDetails = () => {
             iconRight={<ArrowRight />}
             className="w-full"
             onClick={handleJoinContest}
+            disabled={isLoading || error !== null || hasJoined}
           >
-            Join Contest
+            {isLoading
+              ? "Joining..."
+              : hasJoined
+              ? "Already Joined"
+              : "Join Contest"}
           </Button>
         </div>
       </div>

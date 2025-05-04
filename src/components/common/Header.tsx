@@ -3,8 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactComponent as Logo } from "@/src/assets/images/logo.svg";
-import { FC } from "react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { FC, Suspense, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import classNames from "classnames";
+
+const WalletMultiButton = dynamic(
+  () =>
+    import("@solana/wallet-adapter-react-ui").then(
+      (mod) => mod.WalletMultiButton
+    ),
+  { ssr: false }
+);
 
 const navList = [
   {
@@ -27,10 +36,29 @@ const navList = [
 
 const Header: FC = () => {
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <div className="py-4 px-4">
-      <div className="py-2 px-4 bg-transparent flex items-center justify-between">
+    <header className="py-4 px-4 sticky top-0 z-50 transition-colors duration-300">
+      <div
+        className={classNames(
+          "py-2 px-4 flex items-center justify-between rounded-2xl transition-all duration-300",
+          isScrolled ? "bg-white/5 backdrop-blur-lg" : "bg-transparent"
+        )}
+      >
         <Link href="/">
           <Logo />
         </Link>
@@ -50,9 +78,17 @@ const Header: FC = () => {
             </li>
           ))}
         </ul>
-        <WalletMultiButton />
+        <div className="min-w-[127px]">
+          <Suspense
+            fallback={
+              <div className="h-10 w-40 bg-neutral-900 rounded-xl animate-pulse" />
+            }
+          >
+            <WalletMultiButton />
+          </Suspense>
+        </div>
       </div>
-    </div>
+    </header>
   );
 };
 

@@ -4,7 +4,7 @@ import winnrIdl from "./idl/winnr.json";
 export const programId = new web3.PublicKey(winnrIdl.address);
 
 export const mint = new web3.PublicKey(
-  "CHFS7ZV7TQuSuGRSfjbGRQ6C3Eb96haSXyMW8pWjTQCc"
+  "7xio4nHcxdgiRqEXVugauBcP1KtHgRAKCEvCeEcurCXd"
 );
 
 export const [configPda] = web3.PublicKey.findProgramAddressSync(
