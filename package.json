@@ -13,6 +13,7 @@
     "@mantine/hooks": "^7.17.7",
     "@mantine/utils": "^6.0.22",
     "@pythnetwork/hermes-client": "^2.0.0",
+    "@pythnetwork/pyth-solana-receiver": "^0.10.1",
     "@radix-ui/react-accordion": "^1.2.8",
     "@radix-ui/react-dialog": "^1.1.11",
     "@solana/spl-token": "^0.4.13",
