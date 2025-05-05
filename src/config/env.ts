@@ -1,5 +1,5 @@
-export const env = "localnet"; // localnet, devnet, mainnet
+export const env = "devnet"; // localnet, devnet, mainnet
 
-export const RPC_LOCALNET = "http://localhost:8899";
-export const RPC_DEVNET =
-  "https://devnet.helius-rpc.com/?api-key=074f9832-beac-403b-a698-4c3ed9045065";
+export const rpcLocalnet = "http://localhost:8899";
+export const rpcDevnet = process.env.NEXT_PUBLIC_DEVNET_RPC as string;
+export const rpcMainnet = process.env.NEXT_PUBLIC_MAINNET_RPC as string;
