@@ -1,5 +1,5 @@
 {
-  "address": "EyX7MhEETBxhwuA5yPj5YQyRb1F3DC14FMJMbbxDPvgM",
+  "address": "GYwkcJJiUrDnXKYiqMqxfA93h9MejpJbrBHJ73gnfr15",
   "metadata": {
     "name": "protocol",
     "version": "0.1.0",
@@ -7,6 +7,124 @@
     "description": "Created with Anchor"
   },
   "instructions": [
+    {
+      "name": "claim_token_draft_contest",
+      "discriminator": [149, 128, 5, 202, 206, 60, 17, 82],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [99, 111, 110, 102, 105, 103]
+              }
+            ]
+          }
+        },
+        {
+          "name": "contest",
+          "writable": true
+        },
+        {
+          "name": "contest_metadata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99, 111, 110, 116, 101, 115, 116, 95, 109, 101, 116, 97, 100,
+                  97, 116, 97
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "contest_entry",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116, 111, 107, 101, 110, 95, 100, 114, 97, 102, 116, 95, 99,
+                  111, 110, 116, 101, 115, 116, 95, 101, 110, 116, 114, 121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "contest"
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "escrow_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101, 115, 99, 114, 111, 119, 95, 116, 111, 107, 101, 110, 95,
+                  97, 99, 99, 111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102, 101, 101, 95, 116, 111, 107, 101, 110, 95, 97, 99, 99,
+                  111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "signer_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
     {
       "name": "create_token_draft_contest",
       "discriminator": [76, 130, 221, 226, 0, 250, 140, 99],
@@ -56,7 +174,7 @@
           }
         },
         {
-          "name": "credits",
+          "name": "contest_credits",
           "writable": true,
           "pda": {
             "seeds": [
@@ -201,14 +319,15 @@
           "writable": true
         },
         {
-          "name": "program_token_account",
+          "name": "escrow_token_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  116, 111, 107, 101, 110, 95, 97, 99, 99, 111, 117, 110, 116
+                  101, 115, 99, 114, 111, 119, 95, 116, 111, 107, 101, 110, 95,
+                  97, 99, 99, 111, 117, 110, 116
                 ]
               },
               {
@@ -277,14 +396,34 @@
           "name": "mint"
         },
         {
-          "name": "token_account",
+          "name": "escrow_token_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  116, 111, 107, 101, 110, 95, 97, 99, 99, 111, 117, 110, 116
+                  101, 115, 99, 114, 111, 119, 95, 116, 111, 107, 101, 110, 95,
+                  97, 99, 99, 111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102, 101, 101, 95, 116, 111, 107, 101, 110, 95, 97, 99, 99,
+                  111, 117, 110, 116
                 ]
               },
               {
@@ -302,7 +441,12 @@
           "address": "11111111111111111111111111111111"
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "token_draft_contest_fee_percent",
+          "type": "u8"
+        }
+      ]
     },
     {
       "name": "resolve_token_draft_contest",
@@ -338,6 +482,63 @@
           }
         },
         {
+          "name": "contest_metadata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99, 111, 110, 116, 101, 115, 116, 95, 109, 101, 116, 97, 100,
+                  97, 116, 97
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "escrow_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101, 115, 99, 114, 111, 119, 95, 116, 111, 107, 101, 110, 95,
+                  97, 99, 99, 111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102, 101, 101, 95, 116, 111, 107, 101, 110, 95, 97, 99, 99,
+                  111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
           "name": "feed0",
           "optional": true
         },
@@ -356,6 +557,67 @@
         {
           "name": "feed4",
           "optional": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "withdraw_fee",
+      "discriminator": [14, 122, 231, 218, 31, 238, 223, 150],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [99, 111, 110, 102, 105, 103]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102, 101, 101, 95, 116, 111, 107, 101, 110, 95, 97, 99, 99,
+                  111, 117, 110, 116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "config.mint",
+                "account": "Config"
+              }
+            ]
+          }
+        },
+        {
+          "name": "withdrawal_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "token_program"
         },
         {
           "name": "system_program",
@@ -438,11 +700,19 @@
     },
     {
       "code": 6011,
-      "name": "AlreadyResolved"
+      "name": "ContestNotResolved"
     },
     {
       "code": 6012,
+      "name": "AlreadyResolved"
+    },
+    {
+      "code": 6013,
       "name": "NotWinner"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidRewardAllocation"
     }
   ],
   "types": [
@@ -458,10 +728,6 @@
           {
             "name": "mint",
             "type": "pubkey"
-          },
-          {
-            "name": "is_initialized",
-            "type": "bool"
           }
         ]
       }
@@ -474,6 +740,10 @@
           {
             "name": "token_draft_contest_count",
             "type": "u64"
+          },
+          {
+            "name": "token_draft_contest_fee_percent",
+            "type": "u8"
           }
         ]
       }
@@ -655,7 +925,7 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "contest",
+            "name": "contest_key",
             "type": "pubkey"
           },
           {

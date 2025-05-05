@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/protocol.json`.
  */
 export type Protocol = {
-  address: "EyX7MhEETBxhwuA5yPj5YQyRb1F3DC14FMJMbbxDPvgM";
+  address: "GYwkcJJiUrDnXKYiqMqxfA93h9MejpJbrBHJ73gnfr15";
   metadata: {
     name: "protocol";
     version: "0.1.0";
@@ -13,6 +13,194 @@ export type Protocol = {
     description: "Created with Anchor";
   };
   instructions: [
+    {
+      name: "claimTokenDraftContest";
+      discriminator: [149, 128, 5, 202, 206, 60, 17, 82];
+      accounts: [
+        {
+          name: "signer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [99, 111, 110, 102, 105, 103];
+              }
+            ];
+          };
+        },
+        {
+          name: "contest";
+          writable: true;
+        },
+        {
+          name: "contestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  115,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              }
+            ];
+          };
+        },
+        {
+          name: "contestEntry";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  100,
+                  114,
+                  97,
+                  102,
+                  116,
+                  95,
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  115,
+                  116,
+                  95,
+                  101,
+                  110,
+                  116,
+                  114,
+                  121
+                ];
+              },
+              {
+                kind: "account";
+                path: "contest";
+              },
+              {
+                kind: "account";
+                path: "signer";
+              }
+            ];
+          };
+        },
+        {
+          name: "mint";
+          writable: true;
+        },
+        {
+          name: "escrowTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ];
+              },
+              {
+                kind: "account";
+                path: "mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "feeTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  102,
+                  101,
+                  101,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ];
+              },
+              {
+                kind: "account";
+                path: "mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "signerTokenAccount";
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        }
+      ];
+      args: [];
+    },
     {
       name: "createTokenDraftContest";
       discriminator: [76, 130, 221, 226, 0, 250, 140, 99];
@@ -93,7 +281,7 @@ export type Protocol = {
           };
         },
         {
-          name: "credits";
+          name: "contestCredits";
           writable: true;
           pda: {
             seeds: [
@@ -309,13 +497,20 @@ export type Protocol = {
           writable: true;
         },
         {
-          name: "programTokenAccount";
+          name: "escrowTokenAccount";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
                   116,
                   111,
                   107,
@@ -411,13 +606,54 @@ export type Protocol = {
           name: "mint";
         },
         {
-          name: "tokenAccount";
+          name: "escrowTokenAccount";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ];
+              },
+              {
+                kind: "account";
+                path: "mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "feeTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  102,
+                  101,
+                  101,
+                  95,
                   116,
                   111,
                   107,
@@ -448,7 +684,12 @@ export type Protocol = {
           address: "11111111111111111111111111111111";
         }
       ];
-      args: [];
+      args: [
+        {
+          name: "tokenDraftContestFeePercent";
+          type: "u8";
+        }
+      ];
     },
     {
       name: "resolveTokenDraftContest";
@@ -508,6 +749,110 @@ export type Protocol = {
           };
         },
         {
+          name: "contestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  115,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              }
+            ];
+          };
+        },
+        {
+          name: "mint";
+          writable: true;
+        },
+        {
+          name: "escrowTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ];
+              },
+              {
+                kind: "account";
+                path: "mint";
+              }
+            ];
+          };
+        },
+        {
+          name: "feeTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  102,
+                  101,
+                  101,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ];
+              },
+              {
+                kind: "account";
+                path: "mint";
+              }
+            ];
+          };
+        },
+        {
           name: "feed0";
           optional: true;
         },
@@ -526,6 +871,82 @@ export type Protocol = {
         {
           name: "feed4";
           optional: true;
+        },
+        {
+          name: "tokenProgram";
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "withdrawFee";
+      discriminator: [14, 122, 231, 218, 31, 238, 223, 150];
+      accounts: [
+        {
+          name: "signer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [99, 111, 110, 102, 105, 103];
+              }
+            ];
+          };
+        },
+        {
+          name: "feeTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  102,
+                  101,
+                  101,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ];
+              },
+              {
+                kind: "account";
+                path: "config.mint";
+                account: "config";
+              }
+            ];
+          };
+        },
+        {
+          name: "withdrawalTokenAccount";
+          writable: true;
+        },
+        {
+          name: "mint";
+          writable: true;
+        },
+        {
+          name: "tokenProgram";
         },
         {
           name: "systemProgram";
@@ -608,11 +1029,19 @@ export type Protocol = {
     },
     {
       code: 6011;
-      name: "alreadyResolved";
+      name: "contestNotResolved";
     },
     {
       code: 6012;
+      name: "alreadyResolved";
+    },
+    {
+      code: 6013;
       name: "notWinner";
+    },
+    {
+      code: 6014;
+      name: "invalidRewardAllocation";
     }
   ];
   types: [
@@ -628,10 +1057,6 @@ export type Protocol = {
           {
             name: "mint";
             type: "pubkey";
-          },
-          {
-            name: "isInitialized";
-            type: "bool";
           }
         ];
       };
@@ -644,6 +1069,10 @@ export type Protocol = {
           {
             name: "tokenDraftContestCount";
             type: "u64";
+          },
+          {
+            name: "tokenDraftContestFeePercent";
+            type: "u8";
           }
         ];
       };
@@ -825,7 +1254,7 @@ export type Protocol = {
         kind: "struct";
         fields: [
           {
-            name: "contest";
+            name: "contestKey";
             type: "pubkey";
           },
           {
