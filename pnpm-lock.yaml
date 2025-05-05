@@ -59,6 +59,9 @@ dependencies:
   react-dom:
     specifier: ^19.0.0
     version: 19.1.0(react@19.1.0)
+  rpc-websockets:
+    specifier: 7.11.0
+    version: 7.11.0
   url-loader:
     specifier: ^4.1.1
     version: 4.1.1(webpack@5.99.7)
@@ -4921,7 +4924,7 @@ packages:
       fast-stable-stringify: 1.0.0
       jayson: 4.2.0
       node-fetch: 2.7.0
-      rpc-websockets: 7.11.2
+      rpc-websockets: 7.11.0
       superstruct: 0.14.2
     transitivePeerDependencies:
       - bufferutil
@@ -12021,8 +12024,9 @@ packages:
       - supports-color
     dev: true
 
-  /rpc-websockets@7.11.2:
-    resolution: {integrity: sha512-pL9r5N6AVHlMN/vT98+fcO+5+/UcPLf/4tq+WUaid/PPUGS/ttJ3y8e9IqmaWKtShNAysMSjkczuEA49NuV7UQ==}
+  /rpc-websockets@7.11.0:
+    resolution: {integrity: sha512-IkLYjayPv6Io8C/TdCL5gwgzd1hFz2vmBZrjMw/SPEXo51ETOhnzgS4Qy5GWi2JQN7HKHa66J3+2mv0fgNh/7w==}
+    deprecated: deprecate 7.11.0
     dependencies:
       eventemitter3: 4.0.7
       uuid: 8.3.2
