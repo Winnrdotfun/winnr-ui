@@ -11,7 +11,7 @@ export interface Contest {
   tokenFeedIds: string[];
   tokenStartPrices: number[];
   tokenRois: number[];
-  winnerIds: string[];
+  winnerIds: number[];
   winnerRewardAllocation: number[];
   isResolved: boolean;
 }
