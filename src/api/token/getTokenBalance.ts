@@ -1,18 +1,34 @@
-import { web3 } from "@coral-xyz/anchor";
-import { getAccount, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import {
+  getAccount,
+  getAssociatedTokenAddressSync,
+  getMint,
+} from "@solana/spl-token";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { bnToUiAmount } from "@/src/utils/token";
+import { BN } from "@coral-xyz/anchor";
 
 export const getTokenBalance = async (
-  connection: web3.Connection,
-  mintAddress: string,
-  address: string
+  connection: Connection,
+  walletAddress: string,
+  params: { mintAddress: string }
 ) => {
-  const mint = new web3.PublicKey(mintAddress);
-  const walletAddress = new web3.PublicKey(address);
-  const tokenAccountAddress = getAssociatedTokenAddressSync(
-    mint,
-    walletAddress
-  );
-  const tokenAccount = await getAccount(connection, tokenAccountAddress);
-  const amount = tokenAccount.amount;
-  return amount;
+  const { mintAddress } = params;
+
+  const mint = new PublicKey(mintAddress);
+  const walletAddr = new PublicKey(walletAddress);
+
+  const tokenAccAddress = getAssociatedTokenAddressSync(mint, walletAddr);
+  const mintAcc = await getMint(connection, mint);
+  const tokenAcc = await getAccount(connection, tokenAccAddress);
+
+  const decimals = mintAcc.decimals;
+  const amount = new BN(tokenAcc.amount.toString());
+  const uiAmount = bnToUiAmount(amount, decimals, 2);
+
+  const data = {
+    amount,
+    uiAmount,
+  };
+
+  return data;
 };
