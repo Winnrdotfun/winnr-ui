@@ -100,7 +100,7 @@ const ContestCardDetails = () => {
     if (pg && params.slug && wallet) {
       getTokenDraftContestsEntry(pg, {
         contestAddress: params.slug as string,
-        signerAddress: wallet.publicKey.toBase58(),
+        userAddress: wallet.publicKey.toBase58(),
       }).then((entry) => {
         setHasJoined(entry !== null);
       });
@@ -185,10 +185,11 @@ const ContestCardDetails = () => {
 
     setIsLoading(true);
     try {
-      await enterTokenDraftContest(pg, connection, wallet, {
+      const res = await enterTokenDraftContest(pg, connection, wallet, {
         contestAddress: params.slug as string,
         creditAllocation: creditAllocations,
       });
+      console.log("Contest joined successfully", res);
       // Success message or redirect
     } catch (error) {
       console.error("Error joining contest:", error);

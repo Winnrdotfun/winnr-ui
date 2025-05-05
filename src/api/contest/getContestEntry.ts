@@ -4,14 +4,14 @@ import { programId } from "../utils";
 
 export const getTokenDraftContestsEntry = async (
   pg: Program<IWinner>,
-  params: { contestAddress: string; signerAddress: string }
+  params: { contestAddress: string; userAddress: string }
 ) => {
   const { contestAddress } = params;
   const [contestEntryPda] = web3.PublicKey.findProgramAddressSync(
     [
       Buffer.from("token_draft_contest_entry"),
       new web3.PublicKey(contestAddress).toBuffer(),
-      new web3.PublicKey(params.signerAddress).toBuffer(),
+      new web3.PublicKey(params.userAddress).toBuffer(),
     ],
     programId
   );
