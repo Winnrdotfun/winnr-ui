@@ -21,11 +21,15 @@ import { useParams } from "next/navigation";
 import { bnToUiAmount } from "@/src/utils/token";
 import { useTokenPrices } from "@/src/hooks/useTokenPrices";
 import ContestCardDetailsLoading from "../ui/Loading/ContestCardDetailsLoading";
-import { useAnchorWallet } from "@solana/wallet-adapter-react";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
 import * as web3 from "@solana/web3.js";
 import Button from "../ui/Button/Button";
 import { Contest } from "@/src/types/contest";
+import { resolveTokenDraftContest } from "@/src/api/contest/resolveContest";
+import { calculateWinnerReward } from "@/src/utils/contest";
+import { BN } from "@coral-xyz/anchor";
+import { claimTokenDraftContestRewards } from "@/src/api/contest/claimContestReward";
 
 interface PriceData {
   price: {
@@ -60,6 +64,7 @@ const TOKEN_INFO = [
 
 const ContestCardDetails = () => {
   const pg = useProgram();
+  const { connection } = useConnection();
   const wallet = useAnchorWallet();
   const params = useParams();
   const [contest, setContest] = useState<Contest | null>(null);
@@ -86,7 +91,7 @@ const ContestCardDetails = () => {
     if (pg && params.slug && wallet) {
       getTokenDraftContestsEntry(pg, {
         contestAddress: params.slug as string,
-        signerAddress: wallet.publicKey.toBase58(),
+        userAddress: wallet.publicKey.toBase58(),
       }).then((entry) => {
         if (entry) {
           setContestEntry(entry);
@@ -117,10 +122,7 @@ const ContestCardDetails = () => {
     if (pg && params.slug) {
       getTokenDraftContestsByAddress(pg, params.slug as string).then((res) => {
         if (res) {
-          setContest({
-            ...res,
-            winnerIds: res.winnerIds.map(String),
-          });
+          setContest(res);
         }
       });
     }
@@ -186,6 +188,41 @@ const ContestCardDetails = () => {
 
     return totalWeightedRoi;
   };
+
+  const handleResolveContest = async () => {
+    if (!pg || !contest || !wallet) return;
+
+    try {
+      const res = await resolveTokenDraftContest(pg, connection, wallet, {
+        contestAddress: contest.address,
+      });
+      console.log("Contest resolved successfully", res);
+    } catch (error) {
+      console.error("Error resolving contest", error);
+    }
+  };
+
+  const handleClaimPrize = async () => {
+    if (!pg || !contest || !wallet) return;
+
+    try {
+      const res = await claimTokenDraftContestRewards(pg, connection, wallet, {
+        contestAddress: contest.address,
+      });
+      console.log("Prize claimed successfully", res);
+    } catch (error) {
+      console.error("Error claiming prize", error);
+    }
+  };
+
+  const isContestResolved = contest?.isResolved;
+  const hasAlreadyClaimed = contestEntry?.hasClaimed;
+  const isWinner =
+    isFinite(contestEntry?.id as number) &&
+    contest.winnerIds.includes(contestEntry!.id);
+  const winnerReward: BN = isWinner
+    ? calculateWinnerReward(contest, contestEntry!.id)
+    : new BN(0);
 
   return (
     <div className="bg-neutral-950 p-6 border border-white/5 max-w-[362px] rounded-xl relative w-full">
@@ -294,17 +331,31 @@ const ContestCardDetails = () => {
             <span>You Won</span>
           </div>
           <div className="heading-h6 text-neutral-500 flex items-center gap-1">
-            {bnToUiAmount(contest.entryFee, 6, 2)} USDC
+            {bnToUiAmount(winnerReward, 6, 2)} USDC
             <USDC className="w-4 h-4" />
           </div>
         </div>
+        {!isContestResolved && (
+          <Button
+            size="sm"
+            iconRight={<ArrowRight />}
+            disabled={contestEntry?.hasClaimed}
+            className="w-full mb-2"
+            onClick={handleResolveContest}
+          >
+            Resolve Contest
+          </Button>
+        )}
         <Button
           size="sm"
           iconRight={<ArrowRight />}
-          disabled={contestEntry?.hasClaimed}
+          disabled={hasAlreadyClaimed || !isWinner}
           className="w-full"
+          onClick={handleClaimPrize}
         >
-          Claim Prize
+          {!isWinner && "No luck this time!"}
+          {!hasAlreadyClaimed && isWinner && "You won. Claim Prize"}
+          {hasAlreadyClaimed && "Already Claimed!"}
         </Button>
       </div>
 
