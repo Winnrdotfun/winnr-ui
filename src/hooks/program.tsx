@@ -16,6 +16,7 @@ export const useProgram = () => {
 
     const pg = new Program(winnrIdl, { connection }) as Program<IWinnr>;
     setProgram(pg);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connection]);
 
   return program;
