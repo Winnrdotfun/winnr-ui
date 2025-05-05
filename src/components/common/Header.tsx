@@ -4,8 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactComponent as Logo } from "@/src/assets/images/logo.svg";
 import { FC, Suspense, useEffect, useState } from "react";
+import { ReactComponent as USDC } from "@/src/assets/icons/usdc.svg";
 import dynamic from "next/dynamic";
 import classNames from "classnames";
+import { getUsdcBalance } from "@/src/api/token/getUsdcBalance";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 
 const WalletMultiButton = dynamic(
   () =>
@@ -36,7 +39,17 @@ const navList = [
 
 const Header: FC = () => {
   const pathname = usePathname();
+  const { connection } = useConnection();
+  const wallet = useAnchorWallet();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [usdcBalance, setUsdcBalance] = useState("0");
+
+  useEffect(() => {
+    if (!wallet || !connection) return;
+    getUsdcBalance(connection, wallet.publicKey.toBase58()).then((balance) =>
+      setUsdcBalance(balance.uiAmount)
+    );
+  }, [wallet, connection]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,7 +91,11 @@ const Header: FC = () => {
             </li>
           ))}
         </ul>
-        <div className="min-w-[127px]">
+        <div className="flex flex-row min-w-[127px]">
+          <div className="flex items-center gap-2 mx-2">
+            <div className="text-neutral-50">{usdcBalance} USDC</div>
+            <USDC className="w-[26px] h-[26px]" />
+          </div>
           <Suspense
             fallback={
               <div className="h-10 w-40 bg-neutral-900 rounded-xl animate-pulse" />
