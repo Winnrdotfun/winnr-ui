@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/protocol.json`.
  */
 export type Protocol = {
-  address: "GYwkcJJiUrDnXKYiqMqxfA93h9MejpJbrBHJ73gnfr15";
+  address: "F21uWStbRzTLcPTk6fsmq7wX5Cj8R72jk6rc5FXPCXmk";
   metadata: {
     name: "protocol";
     version: "0.1.0";
@@ -553,8 +553,8 @@ export type Protocol = {
       ];
     },
     {
-      name: "initialize";
-      discriminator: [175, 175, 109, 31, 13, 152, 155, 237];
+      name: "initConfig";
+      discriminator: [23, 235, 115, 232, 168, 96, 1, 231];
       accounts: [
         {
           name: "signer";
@@ -598,6 +598,41 @@ export type Protocol = {
                   116,
                   97
                 ];
+              }
+            ];
+          };
+        },
+        {
+          name: "mint";
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        }
+      ];
+      args: [
+        {
+          name: "tokenDraftContestFeePercent";
+          type: "u8";
+        }
+      ];
+    },
+    {
+      name: "initTokenAccounts";
+      discriminator: [18, 116, 17, 220, 17, 174, 229, 193];
+      accounts: [
+        {
+          name: "signer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "config";
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [99, 111, 110, 102, 105, 103];
               }
             ];
           };
@@ -684,12 +719,7 @@ export type Protocol = {
           address: "11111111111111111111111111111111";
         }
       ];
-      args: [
-        {
-          name: "tokenDraftContestFeePercent";
-          type: "u8";
-        }
-      ];
+      args: [];
     },
     {
       name: "resolveTokenDraftContest";

@@ -2,7 +2,9 @@ import { BN, Program } from "@coral-xyz/anchor";
 import type { Protocol as IWinner } from "../idl/winnr";
 
 export const getAllTokenDraftContests = async (pg: Program<IWinner>) => {
-  return (await pg.account.tokenDraftContest.all()).map((res) => {
+  const allContests = await pg.account.tokenDraftContest.all();
+
+  const contestList = allContests.map((res) => {
     const m = res.account;
     const prizePool = m.entryFee.mul(new BN(m.numEntries));
 
@@ -26,4 +28,6 @@ export const getAllTokenDraftContests = async (pg: Program<IWinner>) => {
       isResolved: m.isResolved,
     };
   });
+
+  return contestList;
 };

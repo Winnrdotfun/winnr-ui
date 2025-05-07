@@ -40,6 +40,8 @@ const ContestCard = () => {
   >([]);
 
   useEffect(() => {
+    if (!pg) return;
+
     getAllTokenDraftContests(pg!).then((res) => {
       if (res && res.length > 0) {
         setContests(
