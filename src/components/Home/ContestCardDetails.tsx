@@ -6,10 +6,6 @@ import { ReactComponent as Candle } from "@/src/assets/icons/candle.svg";
 import { ReactComponent as Error } from "@/src/assets/icons/error.svg";
 import { ReactComponent as USDC } from "@/src/assets/icons/usdc.svg";
 import { ReactComponent as ArrowRight } from "@/src/assets/icons/arrow-right.svg";
-import Bonk from "@/src/assets/tokens/bonk.png";
-import Popcat from "@/src/assets/tokens/popcat.png";
-import Wif from "@/src/assets/tokens/wif.png";
-import Trump from "@/src/assets/tokens/trump.webp";
 import ProgressBar from "../common/ProgressBar";
 import Status from "../ui/Status/Status";
 import Image from "next/image";
@@ -25,6 +21,7 @@ import ContestCardDetailsLoading from "../ui/Loading/ContestCardDetailsLoading";
 import { enterTokenDraftContest } from "@/src/api/contest/enterContest";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
+import { tokenInfos } from "@/src/config/tokens";
 
 interface PriceData {
   price: {
@@ -51,29 +48,6 @@ interface Contest {
   winnerRewardAllocation: number[];
   isResolved: boolean;
 }
-
-const TOKEN_INFO = [
-  {
-    id: "72b021217ca3fe68922a19aaf990109cb9d84e9ad004b4d2025ad6f529314419",
-    name: "BONK",
-    image: Bonk,
-  },
-  {
-    id: "b9312a7ee50e189ef045aa3c7842e099b061bd9bdc99ac645956c3b660dc8cce",
-    name: "POPCAT",
-    image: Popcat,
-  },
-  {
-    id: "4ca4beeca86f0d164160323817a4e42b10010a724c2217c6ee41b54cd4cc61fc",
-    name: "WIF",
-    image: Wif,
-  },
-  {
-    id: "879551021853eec7a7dc827578e8e69da7e4fa8148339aa0d3d5296405be4b1a",
-    name: "TRUMP",
-    image: Trump,
-  },
-];
 
 const ContestCardDetails = () => {
   const pg = useProgram();
@@ -284,7 +258,7 @@ const ContestCardDetails = () => {
         </p>
         <div className="flex flex-col gap-2 mb-3">
           {contest.tokenFeedIds.map((tokenId, index) => {
-            const tokenInfo = TOKEN_INFO.find((token) => token.id === tokenId);
+            const tokenInfo = tokenInfos.find((token) => token.id === tokenId);
             const startPrice = contest.tokenStartPrices[index];
             const livePrice = livePrices?.find(
               (price: PriceData) => price.id === tokenId
@@ -301,7 +275,7 @@ const ContestCardDetails = () => {
               >
                 <div className="flex-1 flex items-center gap-2">
                   <Image
-                    src={tokenInfo?.image || Bonk}
+                    src={tokenInfo?.image || ""}
                     alt={tokenInfo?.name || "token"}
                     width={24}
                     height={24}
