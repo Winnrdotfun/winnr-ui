@@ -16,9 +16,8 @@ export const getTokenBalance = async (
 
   const mint = new PublicKey(mintAddress);
   const walletAddr = new PublicKey(walletAddress);
-
-  const tokenAccAddress = getAssociatedTokenAddressSync(mint, walletAddr);
   const mintAcc = await getMint(connection, mint);
+  const tokenAccAddress = getAssociatedTokenAddressSync(mint, walletAddr);
   const tokenAcc = await getAccount(connection, tokenAccAddress);
 
   const decimals = mintAcc.decimals;

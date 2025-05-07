@@ -152,6 +152,7 @@ const ContestCardDetails = () => {
     if (!pg || !wallet || !connection) return;
 
     const total = creditAllocations.reduce((sum, val) => sum + val, 0);
+
     if (total !== 100) {
       setError("Total allocation must be exactly 100");
       return;
@@ -159,9 +160,10 @@ const ContestCardDetails = () => {
 
     setIsLoading(true);
     try {
+      const numTokens = contest.tokenFeedIds.length;
       const res = await enterTokenDraftContest(pg, connection, wallet, {
         contestAddress: params.slug as string,
-        creditAllocation: creditAllocations,
+        creditAllocation: creditAllocations.slice(0, numTokens),
       });
       console.log("Contest joined successfully", res);
       // Success message or redirect
