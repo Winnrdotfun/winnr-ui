@@ -22,7 +22,7 @@ import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
 import * as web3 from "@solana/web3.js";
 import Button from "../ui/Button/Button";
 import { Contest } from "@/src/types/contest";
-import { resolveTokenDraftContest } from "@/src/api/contest/resolveContest";
+import { postPricesAndResolveTokenDraftContest } from "@/src/api/contest/resolveContest";
 import { calculateWinnerReward } from "@/src/utils/contest";
 import { BN } from "@coral-xyz/anchor";
 import { claimTokenDraftContestRewards } from "@/src/api/contest/claimContestReward";
@@ -167,9 +167,14 @@ const ContestCardDetails = () => {
     if (!pg || !contest || !wallet) return;
 
     try {
-      const res = await resolveTokenDraftContest(pg, connection, wallet, {
-        contestAddress: contest.address,
-      });
+      const res = await postPricesAndResolveTokenDraftContest(
+        pg,
+        connection,
+        wallet,
+        {
+          contestAddress: contest.address,
+        }
+      );
       console.log("Contest resolved successfully", res);
     } catch (error) {
       console.error("Error resolving contest", error);
@@ -370,17 +375,17 @@ const ContestCardDetails = () => {
                       roi >= 0 ? "text-green-light" : "text-red-light"
                     }`}
                   >
-                    {roi.toFixed(2)}%
+                    {roi?.toFixed(2)}%
                   </div>
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <div className="body-xs text-neutral-500">
                     <div>Start price</div>
-                    <div> ${startPrice.toFixed(8)}</div>
+                    <div> ${startPrice?.toFixed(8)}</div>
                   </div>
                   <div className="body-xs text-neutral-300 text-right">
                     <div>Current price</div>
-                    <div> ${currentPrice.toFixed(8)}</div>
+                    <div> ${currentPrice?.toFixed(8)}</div>
                   </div>
                 </div>
               </div>

@@ -289,7 +289,7 @@ const ContestCardDetails = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <div className="body-xs text-neutral-500">
-                        ${startPrice.toFixed(8)} ({" "}
+                        ${startPrice?.toFixed(8)} ({" "}
                         <span
                           className={
                             roi >= 0 ? "text-green-light" : "text-red-light"
