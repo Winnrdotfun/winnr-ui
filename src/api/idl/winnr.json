@@ -1,5 +1,5 @@
 {
-  "address": "F21uWStbRzTLcPTk6fsmq7wX5Cj8R72jk6rc5FXPCXmk",
+  "address": "9bGeadnqYTmBhDTxA9KLLgiiY6k33fmsi1vm99AV23mE",
   "metadata": {
     "name": "protocol",
     "version": "0.1.0",
@@ -479,6 +479,46 @@
       "args": []
     },
     {
+      "name": "post_token_draft_contest_prices",
+      "discriminator": [185, 141, 136, 180, 183, 117, 82, 156],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "contest",
+          "writable": true
+        },
+        {
+          "name": "feed0",
+          "optional": true
+        },
+        {
+          "name": "feed1",
+          "optional": true
+        },
+        {
+          "name": "feed2",
+          "optional": true
+        },
+        {
+          "name": "feed3",
+          "optional": true
+        },
+        {
+          "name": "feed4",
+          "optional": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "resolve_token_draft_contest",
       "discriminator": [23, 163, 216, 115, 121, 154, 219, 234],
       "accounts": [
@@ -743,6 +783,14 @@
     {
       "code": 6014,
       "name": "InvalidRewardAllocation"
+    },
+    {
+      "code": 6015,
+      "name": "ContestNotStarted"
+    },
+    {
+      "code": 6016,
+      "name": "ContestPriceNotSet"
     }
   ],
   "types": [

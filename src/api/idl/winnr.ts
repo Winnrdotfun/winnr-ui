@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/protocol.json`.
  */
 export type Protocol = {
-  address: "F21uWStbRzTLcPTk6fsmq7wX5Cj8R72jk6rc5FXPCXmk";
+  address: "9bGeadnqYTmBhDTxA9KLLgiiY6k33fmsi1vm99AV23mE";
   metadata: {
     name: "protocol";
     version: "0.1.0";
@@ -722,6 +722,46 @@ export type Protocol = {
       args: [];
     },
     {
+      name: "postTokenDraftContestPrices";
+      discriminator: [185, 141, 136, 180, 183, 117, 82, 156];
+      accounts: [
+        {
+          name: "signer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "contest";
+          writable: true;
+        },
+        {
+          name: "feed0";
+          optional: true;
+        },
+        {
+          name: "feed1";
+          optional: true;
+        },
+        {
+          name: "feed2";
+          optional: true;
+        },
+        {
+          name: "feed3";
+          optional: true;
+        },
+        {
+          name: "feed4";
+          optional: true;
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        }
+      ];
+      args: [];
+    },
+    {
       name: "resolveTokenDraftContest";
       discriminator: [23, 163, 216, 115, 121, 154, 219, 234];
       accounts: [
@@ -1072,6 +1112,14 @@ export type Protocol = {
     {
       code: 6014;
       name: "invalidRewardAllocation";
+    },
+    {
+      code: 6015;
+      name: "contestNotStarted";
+    },
+    {
+      code: 6016;
+      name: "contestPriceNotSet";
     }
   ];
   types: [

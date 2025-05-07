@@ -6,58 +6,16 @@ import {
   InstructionWithEphemeralSigners,
   PythSolanaReceiver,
 } from "@pythnetwork/pyth-solana-receiver";
-import {
-  contestMetadataPda,
-  escrowTokenAccountPda,
-  feeTokenAccountPda,
-  mint,
-} from "../utils";
-import { getPostTokenDraftContestPricesTransaction } from "./postContestPrices";
 
 const { PublicKey } = web3;
 
-export const postPricesAndResolveTokenDraftContest = async (
+export const postTokenDraftContestPrices = async (
   pg: Program<IWinner>,
   connection: web3.Connection,
   wallet: AnchorWallet,
   params: { contestAddress: string }
 ) => {
-  const pythSolanaReceiver = new PythSolanaReceiver({
-    connection,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    wallet: wallet as any,
-  });
-
-  const versionedTxs0 = await getPostTokenDraftContestPricesTransaction(
-    pg,
-    connection,
-    wallet,
-    params
-  );
-
-  const versionedTxs1 = await getResolveTokenDraftContestTransaction(
-    pg,
-    connection,
-    wallet,
-    params
-  );
-
-  const versionedTxs = [...versionedTxs0, ...versionedTxs1];
-
-  const txSignatures = await pythSolanaReceiver.provider.sendAll(versionedTxs, {
-    skipPreflight: false,
-  });
-
-  return txSignatures;
-};
-
-export const resolveTokenDraftContest = async (
-  pg: Program<IWinner>,
-  connection: web3.Connection,
-  wallet: AnchorWallet,
-  params: { contestAddress: string }
-) => {
-  const versionedTxs = await getResolveTokenDraftContestTransaction(
+  const versionedTxs = await getPostTokenDraftContestPricesTransaction(
     pg,
     connection,
     wallet,
@@ -75,7 +33,7 @@ export const resolveTokenDraftContest = async (
   return txSignatures;
 };
 
-export const getResolveTokenDraftContestTransaction = async (
+export const getPostTokenDraftContestPricesTransaction = async (
   pg: Program<IWinner>,
   connection: web3.Connection,
   wallet: AnchorWallet,
@@ -83,17 +41,11 @@ export const getResolveTokenDraftContestTransaction = async (
 ) => {
   const { contestAddress } = params;
   const contestPda = new PublicKey(contestAddress);
-  const [contestCreditsPda] = PublicKey.findProgramAddressSync(
-    [Buffer.from("token_draft_contest_credits"), contestPda.toBuffer()],
-    pg.programId
-  );
-
   const contest = await pg.account.tokenDraftContest.fetch(contestAddress);
 
   const priceFeedIds = contest.tokenFeedIds.map(
     (v) => "0x" + v.toBuffer().toString("hex").toLowerCase()
   );
-
   const pythSolanaReceiver = new PythSolanaReceiver({
     connection,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,9 +53,9 @@ export const getResolveTokenDraftContestTransaction = async (
   });
   const hermesClient = new HermesClient("https://hermes.pyth.network/", {});
 
-  const endTimestamp = contest.endTime.toNumber();
+  const startTimestamp = contest.startTime.toNumber();
   const priceUpdates = await hermesClient.getPriceUpdatesAtTimestamp(
-    endTimestamp,
+    startTimestamp,
     priceFeedIds,
     { encoding: "base64" }
   );
@@ -120,12 +72,7 @@ export const getResolveTokenDraftContestTransaction = async (
 
       const accounts = {
         signer: wallet.publicKey,
-        contest: contestAddress,
-        contestCredits: contestCreditsPda,
-        contestMetadata: contestMetadataPda,
-        mint,
-        escrowTokenAccount: escrowTokenAccountPda,
-        feeTokenAccount: feeTokenAccountPda,
+        contest: contestPda,
         feed0: priceUpdateAccounts[0],
         feed1: priceUpdateAccounts[1] || null,
         feed2: priceUpdateAccounts[2] || null,
@@ -135,7 +82,7 @@ export const getResolveTokenDraftContestTransaction = async (
       };
 
       const txInstruction = await pg.methods
-        .resolveTokenDraftContest()
+        .postTokenDraftContestPrices()
         .accounts(accounts)
         .instruction();
 
