@@ -65,13 +65,18 @@ const ContestCard = () => {
             const startTime = contest.startTime;
             const endTime = contest.endTime;
             const distance = startTime > now ? startTime - now : endTime - now;
-            const hours = Math.floor(
-              (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            const hours = Math.max(
+              0,
+              Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
             );
-            const minutes = Math.floor(
-              (distance % (1000 * 60 * 60)) / (1000 * 60)
+            const minutes = Math.max(
+              0,
+              Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
             );
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const seconds = Math.max(
+              0,
+              Math.floor((distance % (1000 * 60)) / 1000)
+            );
             return {
               time: `${hours}h : ${minutes}m : ${seconds}s`,
               isEnding: startTime <= now,
@@ -136,13 +141,36 @@ const ContestCard = () => {
               </div>
               <div className="flex items-center gap-2">
                 <div className="body-xs text-white/60">
-                  {timeLefts[idx]?.isEnding ? "Ends in" : "Starts in"}
-                  <span className="heading-h6 ml-1.5 text-neutral-50">
-                    {timeLefts[idx]?.time}
-                  </span>
+                  {(() => {
+                    const now = new Date().getTime();
+                    if (now > contest.endTime) {
+                      return "Contest Ended";
+                    }
+                    return (
+                      <>
+                        {timeLefts[idx]?.isEnding ? "Ends in" : "Starts in"}
+                        <span className="heading-h6 ml-1.5 text-neutral-50">
+                          {timeLefts[idx]?.time}
+                        </span>
+                      </>
+                    );
+                  })()}
                 </div>
                 <Button size="sm" iconRight={<ArrowRight />}>
-                  Enter with ${bnToUiAmount(contest.entryFee, 6, 2)}
+                  {(() => {
+                    const now = new Date().getTime();
+                    if (now > contest.endTime) {
+                      return "View More";
+                    } else if (now < contest.startTime) {
+                      return "View More";
+                    } else {
+                      return `Enter with $${bnToUiAmount(
+                        contest.entryFee,
+                        6,
+                        2
+                      )}`;
+                    }
+                  })()}
                 </Button>
               </div>
             </div>

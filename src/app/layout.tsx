@@ -4,6 +4,7 @@ import Layout from "../components/common/Layout";
 import { ModalsProvider } from "../components/ui/ModalsProvider/ModalsProvider";
 import RootProvider from "./provider";
 import QueryProvider from "../components/providers/QueryProvider";
+import ToastProvider from "../components/ui/Toast/ToastProvider";
 
 export const metadata: Metadata = {
   title: "Winner",
@@ -42,6 +43,7 @@ export default function RootLayout({
           <RootProvider>
             <ModalsProvider>
               <Layout>{children}</Layout>
+              <ToastProvider />
             </ModalsProvider>
           </RootProvider>
         </QueryProvider>

@@ -93,8 +93,8 @@ const Header: FC = () => {
         </ul>
         <div className="flex flex-row min-w-[127px]">
           <div className="flex items-center gap-2 mx-2">
-            <div className="text-neutral-50">{usdcBalance} USDC</div>
-            <USDC className="w-[26px] h-[26px]" />
+            <div className="text-neutral-50 heading-h5">{usdcBalance} USDC</div>
+            <USDC className="w-4 h-4" />
           </div>
           <Suspense
             fallback={

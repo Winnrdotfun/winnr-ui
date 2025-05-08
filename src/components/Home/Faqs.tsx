@@ -42,7 +42,7 @@ const faqs = [
         <ul className="list-disc pl-4 body-sm text-white/60 gap-0.5 flex flex-col mb-4">
           <li>Here is example, if contest is joined by 100 people:</li>
         </ul>
-        <Image src={PriceDistribution} alt="Prize" />
+        {/* <Image src={PriceDistribution} alt="Prize" /> */}
       </>
     ),
   },

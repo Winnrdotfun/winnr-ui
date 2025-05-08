@@ -28,6 +28,7 @@ import { BN } from "@coral-xyz/anchor";
 import { claimTokenDraftContestRewards } from "@/src/api/contest/claimContestReward";
 import { tokenInfos } from "@/src/config/tokens";
 import { useGetLatestTokenPrices } from "@/src/hooks/useGetLatestTokenPrices";
+import { showToast } from "../ui/Toast/ToastProvider";
 
 const ContestCardDetails = () => {
   const pg = useProgram();
@@ -54,8 +55,13 @@ const ContestCardDetails = () => {
 
   const { data: startPrices } = useGetTokenPricesAtTimestamp(
     contest?.tokenFeedIds || [],
-    contest?.startTime || 0
+    contest?.startTime || new Date().getTime()
   );
+
+  useEffect(() => {
+    console.log(contest, "startPrices");
+  }, [contest]);
+
   const { data: currentPrices } = useGetLatestTokenPrices(
     contest?.tokenFeedIds || []
   );
@@ -184,9 +190,10 @@ const ContestCardDetails = () => {
       const res = await claimTokenDraftContestRewards(pg, connection, wallet, {
         contestAddress: contest.address,
       });
-      console.log("Prize claimed successfully", res);
+      showToast.success("Prize claimed successfully");
     } catch (error) {
       console.error("Error claiming prize", error);
+      showToast.error("Error claiming prize");
     }
   };
 
@@ -352,7 +359,7 @@ const ContestCardDetails = () => {
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-1">
                     <Image
-                      src={tokenInfo?.image}
+                      src={tokenInfo?.image || ""}
                       alt={tokenInfo?.name || "token"}
                       width={24}
                       height={24}

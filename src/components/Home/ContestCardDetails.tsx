@@ -23,6 +23,7 @@ import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
 import { tokenInfos } from "@/src/config/tokens";
 import { useGetLatestTokenPrices } from "@/src/hooks/useGetLatestTokenPrices";
+import { showToast } from "../ui/Toast/ToastProvider";
 
 interface Contest {
   address: string;
@@ -41,6 +42,39 @@ interface Contest {
   winnerRewardAllocation: number[];
   isResolved: boolean;
 }
+
+// Utility functions for centralized logic
+const getContestStatus = (
+  contest: Contest,
+  timeLeft: { isEnded: boolean; isEnding: boolean; isStarted: boolean } | null
+): { title: string; variant: "error" | "success" | "warning" } => {
+  if (contest.isResolved) return { title: "Resolved", variant: "success" };
+  if (timeLeft?.isEnded) return { title: "Ended", variant: "error" };
+  if (timeLeft?.isEnding) return { title: "Ending Soon", variant: "warning" };
+  if (timeLeft?.isStarted) return { title: "In Progress", variant: "success" };
+  return { title: "Not Started", variant: "warning" };
+};
+
+const getButtonText = (
+  isLoading: boolean,
+  hasJoined: boolean,
+  timeLeft: { isEnded: boolean; isStarted: boolean } | null
+) => {
+  if (isLoading) return "Joining...";
+  if (hasJoined) return "Already Joined";
+  if (timeLeft?.isEnded) return "Contest Ended";
+  if (timeLeft?.isStarted) return "Contest Already Started";
+  return "Join Contest";
+};
+
+const getTimeDisplay = (
+  timeLeft: { isEnded: boolean; isEnding: boolean; time: string } | null
+) => {
+  if (timeLeft?.isEnded) return "Contest Ended";
+  return `${timeLeft?.isEnding ? "Ends in" : "Starts in"} ${
+    !timeLeft?.isEnded ? timeLeft?.time : ""
+  }`;
+};
 
 const ContestCardDetails = () => {
   const pg = useProgram();
@@ -63,22 +97,25 @@ const ContestCardDetails = () => {
 
   const { data: startPrices } = useGetTokenPricesAtTimestamp(
     contest?.tokenFeedIds || [],
-    contest?.startTime || 0
+    contest?.startTime || new Date().getTime()
   );
+
   const { data: currentPrices } = useGetLatestTokenPrices(
     contest?.tokenFeedIds || []
   );
 
   useEffect(() => {
-    if (pg && params.slug && wallet) {
+    if (pg && params.slug && wallet && contest) {
       getTokenDraftContestsEntry(pg, {
         contestAddress: params.slug as string,
         userAddress: wallet.publicKey.toBase58(),
       }).then((entry) => {
-        setHasJoined(entry !== null);
+        setHasJoined(
+          entry !== null && contest.startTime <= new Date().getTime()
+        );
       });
     }
-  }, [pg, params.slug, wallet]);
+  }, [pg, params.slug, wallet, contest]);
 
   useEffect(() => {
     if (pg && params.slug) {
@@ -103,11 +140,18 @@ const ContestCardDetails = () => {
         const isEnded = endTime <= now;
         const isEnding = isStarted && !isEnded && endTime - now < 3600000; // Less than 1 hour left
         const distance = isStarted ? endTime - now : startTime - now;
-        const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        const hours = Math.max(
+          0,
+          Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
         );
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const minutes = Math.max(
+          0,
+          Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+        );
+        const seconds = Math.max(
+          0,
+          Math.floor((distance % (1000 * 60)) / 1000)
+        );
         setTimeLeft({
           time: `${hours}h : ${minutes}m : ${seconds}s`,
           isEnding,
@@ -164,11 +208,12 @@ const ContestCardDetails = () => {
         contestAddress: params.slug as string,
         creditAllocation: creditAllocations.slice(0, numTokens),
       });
-      console.log("Contest joined successfully", res);
+      showToast.success("Contest joined successfully");
       // Success message or redirect
     } catch (error) {
       console.error("Error joining contest:", error);
       setError("Failed to join contest. Please try again.");
+      showToast.error("Failed to join contest. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -179,30 +224,7 @@ const ContestCardDetails = () => {
       <div className="mb-4">
         <div className="flex items-center justify-between gap-2">
           <h3 className="heading-h3 text-neutral-50">Draft &Win</h3>
-          <Status
-            title={
-              contest.isResolved
-                ? "Resolved"
-                : timeLeft?.isEnded
-                ? "Ended"
-                : timeLeft?.isEnding
-                ? "Ending Soon"
-                : timeLeft?.isStarted
-                ? "In Progress"
-                : "Not Started"
-            }
-            variant={
-              contest.isResolved
-                ? "success"
-                : timeLeft?.isEnded
-                ? "error"
-                : timeLeft?.isEnding
-                ? "warning"
-                : timeLeft?.isStarted
-                ? "success"
-                : "warning"
-            }
-          />
+          <Status {...getContestStatus(contest, timeLeft)} />
         </div>
       </div>
 
@@ -255,7 +277,9 @@ const ContestCardDetails = () => {
           </div>
         </div>
         <p className="body-xs text-neutral-500 mb-3">
-          Specify how much credit you want to allocation to each token below
+          {timeLeft?.isStarted
+            ? "Contest has already started. Credit allocation is no longer available."
+            : "Specify how much credit you want to allocation to each token below"}
         </p>
         <div className="flex flex-col gap-2 mb-3">
           {contest.tokenFeedIds.map((tokenId, index) => {
@@ -306,6 +330,7 @@ const ContestCardDetails = () => {
                     type="number"
                     min="0"
                     max="100"
+                    disabled={timeLeft?.isStarted || hasJoined}
                   />
                 </div>
               </div>
@@ -322,23 +347,18 @@ const ContestCardDetails = () => {
 
         <div className="mt-5">
           <div className="body-xs text-white/60 mb-3 text-center">
-            {timeLeft?.isEnding ? "Ends in" : "Starts in"}
-            <span className="heading-h6 ml-1.5 text-neutral-50">
-              {timeLeft?.time}
-            </span>
+            {getTimeDisplay(timeLeft)}
           </div>
           <Button
             size="sm"
             iconRight={<ArrowRight />}
             className="w-full"
             onClick={handleJoinContest}
-            disabled={isLoading || error !== null || hasJoined}
+            disabled={
+              isLoading || error !== null || hasJoined || timeLeft?.isStarted
+            }
           >
-            {isLoading
-              ? "Joining..."
-              : hasJoined
-              ? "Already Joined"
-              : "Join Contest"}
+            {getButtonText(isLoading, hasJoined, timeLeft)}
           </Button>
         </div>
       </div>

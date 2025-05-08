@@ -1,0 +1,39 @@
+.toast {
+  @apply pointer-events-auto w-full max-w-sm overflow-hidden shadow-2xl rounded-xl py-3 px-4
+  /* default state */
+   bg-neutral-950 text-neutral-50;
+
+  .close {
+    @apply text-neutral-50;
+  }
+
+  &.loading {
+    @apply bg-neutral-950 text-neutral-50;
+
+    .close {
+      @apply text-neutral-300;
+    }
+  }
+
+  &.success {
+    .close {
+      @apply text-green-light;
+    }
+  }
+
+  &.error {
+    @apply text-red-light;
+
+    .close {
+      @apply text-red-light;
+    }
+  }
+
+  &.primary {
+    @apply text-neutral-50;
+
+    .close {
+      @apply text-neutral-50;
+    }
+  }
+}

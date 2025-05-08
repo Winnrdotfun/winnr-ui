@@ -25,6 +25,7 @@ export const useGetTokenPricesAtTimestamp = (
         );
 
       const priceDataArr = priceService.parsed || [];
+
       const prices: Record<string, number> = {};
       for (const data of priceDataArr) {
         const tokenId = `0x${data.id.toLowerCase()}`;
@@ -36,6 +37,6 @@ export const useGetTokenPricesAtTimestamp = (
     },
     refetchInterval: 10000, // Refetch every 10 seconds
     staleTime: 5000, // Consider data stale after 5 seconds
-    enabled: tokenIds.length > 0 && timestamp > now(),
+    enabled: tokenIds.length > 0 && timestamp < now(),
   });
 };

@@ -80,13 +80,18 @@ const ContestCard = () => {
           const isEnded = endTime <= now;
           const isEnding = isStarted && !isEnded && endTime - now < 3600000; // Less than 1 hour left
           const distance = startTime > now ? startTime - now : endTime - now;
-          const hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          const hours = Math.max(
+            0,
+            Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
           );
-          const minutes = Math.floor(
-            (distance % (1000 * 60 * 60)) / (1000 * 60)
+          const minutes = Math.max(
+            0,
+            Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
           );
-          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          const seconds = Math.max(
+            0,
+            Math.floor((distance % (1000 * 60)) / 1000)
+          );
           setTimeLeft({
             time: `${hours}h : ${minutes}m : ${seconds}s`,
             isEnding,

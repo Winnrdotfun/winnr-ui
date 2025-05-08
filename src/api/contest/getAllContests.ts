@@ -29,5 +29,6 @@ export const getAllTokenDraftContests = async (pg: Program<IWinner>) => {
     };
   });
 
-  return contestList;
+  // Sort contests by startTime in descending order
+  return contestList.sort((a, b) => b.startTime - a.startTime);
 };
