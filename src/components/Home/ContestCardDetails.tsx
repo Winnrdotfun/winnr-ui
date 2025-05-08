@@ -16,20 +16,13 @@ import { getTokenDraftContestsByAddress } from "@/src/api/contest/getContestByAd
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { bnToUiAmount } from "@/src/utils/token";
-import { useTokenPrices } from "@/src/hooks/useTokenPrices";
+import { useGetTokenPricesAtTimestamp } from "@/src/hooks/useGetTokenPricesAtTimestamp";
 import ContestCardDetailsLoading from "../ui/Loading/ContestCardDetailsLoading";
 import { enterTokenDraftContest } from "@/src/api/contest/enterContest";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
 import { tokenInfos } from "@/src/config/tokens";
-
-interface PriceData {
-  price: {
-    price: string;
-    expo: number;
-  };
-  id: string;
-}
+import { useGetLatestTokenPrices } from "@/src/hooks/useGetLatestTokenPrices";
 
 interface Contest {
   address: string;
@@ -68,7 +61,13 @@ const ContestCardDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const [hasJoined, setHasJoined] = useState<boolean>(false);
 
-  const { data: livePrices } = useTokenPrices(contest?.tokenFeedIds || []);
+  const { data: startPrices } = useGetTokenPricesAtTimestamp(
+    contest?.tokenFeedIds || [],
+    contest?.startTime || 0
+  );
+  const { data: currentPrices } = useGetLatestTokenPrices(
+    contest?.tokenFeedIds || []
+  );
 
   useEffect(() => {
     if (pg && params.slug && wallet) {
@@ -261,13 +260,8 @@ const ContestCardDetails = () => {
         <div className="flex flex-col gap-2 mb-3">
           {contest.tokenFeedIds.map((tokenId, index) => {
             const tokenInfo = tokenInfos.find((token) => token.id === tokenId);
-            const startPrice = contest.tokenStartPrices[index];
-            const livePrice = livePrices?.find(
-              (price: PriceData) => price.id === tokenId
-            )?.price;
-            const currentPrice = livePrice
-              ? Number(livePrice.price) * Math.pow(10, livePrice.expo)
-              : startPrice;
+            const startPrice = startPrices?.[tokenId] || 0;
+            const currentPrice = currentPrices?.[tokenId] || 0;
             const roi = calculateRoi(startPrice, currentPrice);
 
             return (

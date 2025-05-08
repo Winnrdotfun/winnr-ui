@@ -6,9 +6,9 @@ const priceServiceConnection = new HermesClient(
   {}
 );
 
-export const useTokenPrices = (tokenIds: string[]) => {
+export const useGetLatestTokenPrices = (tokenIds: string[]) => {
   return useQuery({
-    queryKey: ["tokenPrices", tokenIds],
+    queryKey: ["tokenPricesLatest", tokenIds],
     queryFn: async () => {
       const priceService = await priceServiceConnection.getLatestPriceUpdates(
         tokenIds,
@@ -16,9 +16,19 @@ export const useTokenPrices = (tokenIds: string[]) => {
           encoding: "base64",
         }
       );
-      return priceService.parsed;
+
+      const priceDataArr = priceService.parsed || [];
+      const prices: Record<string, number> = {};
+      for (const data of priceDataArr) {
+        const tokenId = `0x${data.id.toLowerCase()}`;
+        const price = Number(data.price.price) * Math.pow(10, data.price.expo);
+        prices[tokenId] = price;
+      }
+
+      return prices;
     },
     refetchInterval: 10000, // Refetch every 10 seconds
     staleTime: 5000, // Consider data stale after 5 seconds
+    enabled: tokenIds.length > 0,
   });
 };

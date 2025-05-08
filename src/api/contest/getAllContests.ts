@@ -18,8 +18,8 @@ export const getAllTokenDraftContests = async (pg: Program<IWinner>) => {
       maxEntries: m.maxEntries,
       numEntries: m.numEntries,
       prizePool,
-      tokenFeedIds: m.tokenFeedIds.map((id) =>
-        id.toBuffer().toString("hex").toLowerCase()
+      tokenFeedIds: m.tokenFeedIds.map(
+        (id) => `0x${id.toBuffer().toString("hex").toLowerCase()}`
       ),
       tokenStartPrices: m.tokenStartPrices,
       tokenRois: m.tokenRois,

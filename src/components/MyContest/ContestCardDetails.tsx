@@ -15,7 +15,7 @@ import { getTokenDraftContestsByAddress } from "@/src/api/contest/getContestByAd
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { bnToUiAmount } from "@/src/utils/token";
-import { useTokenPrices } from "@/src/hooks/useTokenPrices";
+import { useGetTokenPricesAtTimestamp } from "@/src/hooks/useGetTokenPricesAtTimestamp";
 import ContestCardDetailsLoading from "../ui/Loading/ContestCardDetailsLoading";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
@@ -27,14 +27,7 @@ import { calculateWinnerReward } from "@/src/utils/contest";
 import { BN } from "@coral-xyz/anchor";
 import { claimTokenDraftContestRewards } from "@/src/api/contest/claimContestReward";
 import { tokenInfos } from "@/src/config/tokens";
-
-interface PriceData {
-  price: {
-    price: string;
-    expo: number;
-  };
-  id: string;
-}
+import { useGetLatestTokenPrices } from "@/src/hooks/useGetLatestTokenPrices";
 
 const ContestCardDetails = () => {
   const pg = useProgram();
@@ -59,7 +52,13 @@ const ContestCardDetails = () => {
     0, 0, 0, 0,
   ]);
 
-  const { data: livePrices } = useTokenPrices(contest?.tokenFeedIds || []);
+  const { data: startPrices } = useGetTokenPricesAtTimestamp(
+    contest?.tokenFeedIds || [],
+    contest?.startTime || 0
+  );
+  const { data: currentPrices } = useGetLatestTokenPrices(
+    contest?.tokenFeedIds || []
+  );
 
   useEffect(() => {
     if (pg && params.slug && wallet) {
@@ -138,7 +137,7 @@ const ContestCardDetails = () => {
   };
 
   const calculateTotalRoi = () => {
-    if (!contest || !livePrices) return 0;
+    if (!contest || !startPrices) return 0;
 
     let totalWeightedRoi = 0;
     const totalCredits = creditAllocations.reduce((sum, val) => sum + val, 0);
@@ -146,13 +145,10 @@ const ContestCardDetails = () => {
     if (totalCredits === 0) return 0;
 
     contest.tokenFeedIds.forEach((tokenId, index) => {
-      const startPrice = contest.tokenStartPrices[index];
-      const livePrice = livePrices.find(
-        (price: PriceData) => price.id === tokenId
-      )?.price;
-      const currentPrice = livePrice
-        ? Number(livePrice.price) * Math.pow(10, livePrice.expo)
-        : startPrice;
+      const startPrice = startPrices?.[tokenId];
+      const currentPrice = currentPrices?.[tokenId];
+
+      if (!startPrice || !currentPrice) return 0;
 
       const tokenRoi = calculateRoi(startPrice, currentPrice);
       const creditWeight = creditAllocations[index] / totalCredits;
@@ -344,15 +340,11 @@ const ContestCardDetails = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-2 mb-3">
-          {contest.tokenFeedIds.map((tokenId, index) => {
+          {contest.tokenFeedIds.map((tokenId) => {
             const tokenInfo = tokenInfos.find((token) => token.id === tokenId);
-            const startPrice = contest.tokenStartPrices[index];
-            const livePrice = livePrices?.find(
-              (price: PriceData) => price.id === tokenId
-            )?.price;
-            const currentPrice = livePrice
-              ? Number(livePrice.price) * Math.pow(10, livePrice.expo)
-              : startPrice;
+            const startPrice = startPrices?.[tokenId] || 0;
+            const currentPrice = currentPrices?.[tokenId] || 0;
+
             const roi = calculateRoi(startPrice, currentPrice);
 
             return (
@@ -360,7 +352,7 @@ const ContestCardDetails = () => {
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <div className="flex items-center gap-1">
                     <Image
-                      src={tokenInfo?.image || ""}
+                      src={tokenInfo?.image}
                       alt={tokenInfo?.name || "token"}
                       width={24}
                       height={24}
@@ -381,11 +373,11 @@ const ContestCardDetails = () => {
                 <div className="flex items-center justify-between gap-2">
                   <div className="body-xs text-neutral-500">
                     <div>Start price</div>
-                    <div> ${startPrice?.toFixed(8)}</div>
+                    <div> ${startPrice.toFixed(8)}</div>
                   </div>
                   <div className="body-xs text-neutral-300 text-right">
                     <div>Current price</div>
-                    <div> ${currentPrice?.toFixed(8)}</div>
+                    <div> ${currentPrice.toFixed(8)}</div>
                   </div>
                 </div>
               </div>
