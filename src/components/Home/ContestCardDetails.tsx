@@ -109,11 +109,13 @@ const ContestCardDetails = () => {
       getTokenDraftContestsEntry(pg, {
         contestAddress: params.slug as string,
         userAddress: wallet.publicKey.toBase58(),
-      }).then((entry) => {
-        setHasJoined(
-          entry !== null && contest.startTime <= new Date().getTime()
-        );
-      });
+      })
+        .then((entry) => {
+          setHasJoined(!!entry);
+        })
+        .catch((err) => {
+          console.log("Error getting entry:", err);
+        });
     }
   }, [pg, params.slug, wallet, contest]);
 
@@ -208,6 +210,7 @@ const ContestCardDetails = () => {
         contestAddress: params.slug as string,
         creditAllocation: creditAllocations.slice(0, numTokens),
       });
+      console.log("Contest joined successfully:", res);
       showToast.success("Contest joined successfully");
       // Success message or redirect
     } catch (error) {
