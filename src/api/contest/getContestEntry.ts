@@ -26,6 +26,7 @@ export const getTokenDraftContestsEntry = async (
     user: entry.user.toBase58(),
     id: entry.id,
     contestAddress: entry.contestKey.toBase58(),
+    creditAllocation: Array.from(entry.creditAllocation),
     hasClaimed: entry.hasClaimed,
   };
 };

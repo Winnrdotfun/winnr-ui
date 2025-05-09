@@ -111,7 +111,9 @@ const ContestCardDetails = () => {
         userAddress: wallet.publicKey.toBase58(),
       })
         .then((entry) => {
-          setHasJoined(!!entry);
+          const hasEntered = !!entry;
+          setHasJoined(hasEntered);
+          setCreditAllocations(entry?.creditAllocation || []);
         })
         .catch((err) => {
           console.log("Error getting entry:", err);
