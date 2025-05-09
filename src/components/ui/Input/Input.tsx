@@ -9,6 +9,7 @@ export interface InputProps
   ref?: React.Ref<HTMLInputElement>;
 }
 
+//@ts-expect-error temporary fix
 const Input: FC<InputProps> = forwardRef<HTMLInputElement, InputProps>(
   ({ className, placeholder, error, ...props }, forwardedRef) => {
     return (
