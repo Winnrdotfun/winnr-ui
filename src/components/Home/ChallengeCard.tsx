@@ -3,8 +3,8 @@ import challengeImg from "@/src/assets/images/challenge.png";
 
 const ChallengeCard = () => {
   return (
-    <div className="bg-gradient-to-t from-[#10171D] to-[#101E2A] mb-5 border border-white/5 rounded-3xl p-5 relative w-full">
-      <div className="absolute top-2 right-0">
+    <div className="bg-gradient-to-t from-[#10171D] to-[#101E2A] mb-5 border border-white/5 rounded-3xl sm:rounded-2xl p-5 relative w-full">
+      <div className="absolute top-2 right-0 sm:hidden">
         <Image src={challengeImg} alt="cup" width={260} height={196} />
       </div>
 

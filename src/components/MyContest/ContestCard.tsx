@@ -126,13 +126,13 @@ const ContestCard = () => {
             href={`/my-contest/${contest.address}`}
             className="bg-neutral-950 block mb-5 border border-white/5 rounded-3xl p-2 relative w-full"
           >
-            <div className="absolute top-0 right-10">
+            <div className="absolute top-0 right-10 sm:right-0">
               <Image
                 src={cup}
                 alt="cup"
                 width={228}
                 height={228}
-                className="mix-blend-lighten"
+                className="mix-blend-lighten sm:max-w-[180px] sm:blur-[1px]"
               />
             </div>
             <div className="mb-8 px-4 pt-6">
@@ -152,8 +152,8 @@ const ContestCard = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-black/40 rounded-2xl p-2 pl-4 flex items-center justify-between backdrop-blur-lg">
-              <div className="flex items-center gap-2">
+            <div className="bg-black/40 rounded-2xl p-2 pl-4 flex items-center justify-between backdrop-blur-lg sm:flex-col sm:gap-2">
+              <div className="flex items-center gap-2 sm:w-full sm:justify-between">
                 <Status
                   title={
                     contest.isResolved
@@ -185,8 +185,12 @@ const ContestCard = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button size="sm" iconRight={<ArrowRight />}>
+              <div className="flex items-center gap-2 sm:w-full">
+                <Button
+                  size="sm"
+                  className="sm:w-full"
+                  iconRight={<ArrowRight />}
+                >
                   View more
                 </Button>
               </div>

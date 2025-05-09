@@ -7,8 +7,8 @@ import QueryProvider from "../components/providers/QueryProvider";
 import ToastProvider from "../components/ui/Toast/ToastProvider";
 
 export const metadata: Metadata = {
-  title: "Winner",
-  description: "Winner",
+  title: "Winnr",
+  description: "Winnr",
 };
 
 export default function RootLayout({

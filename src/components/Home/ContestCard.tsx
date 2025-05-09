@@ -105,15 +105,15 @@ const ContestCard = () => {
           <Link
             key={contest.id}
             href={`/contest/${contest.address}`}
-            className="bg-neutral-950 block mb-5 border border-white/5 rounded-3xl p-2 relative w-full"
+            className="bg-neutral-950 block mb-5 border border-white/5 rounded-3xl sm:rounded-2xl p-2 relative w-full"
           >
-            <div className="absolute top-0 right-10">
+            <div className="absolute top-0 right-10 sm:right-0">
               <Image
                 src={cup}
                 alt="cup"
                 width={228}
                 height={228}
-                className="mix-blend-lighten"
+                className="mix-blend-lighten sm:max-w-[180px] sm:blur-[1px]"
               />
             </div>
             <div className="mb-8 px-4 pt-6">
@@ -133,8 +133,8 @@ const ContestCard = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-black/40 rounded-2xl p-2 pl-4 flex items-center justify-between backdrop-blur-lg">
-              <div className="body-xs text-white/60">
+            <div className="bg-black/40 rounded-2xl p-2 pl-4 flex items-center justify-between backdrop-blur-lg sm:flex-col sm:gap-2">
+              <div className="body-xs text-white/60 sm:w-full">
                 <div className="mb-1">Contest Progress</div>
                 <div className="flex items-center gap-2">
                   <div className="flex gap-[2px]">
@@ -143,36 +143,40 @@ const ContestCard = () => {
                   <div>{spotsLeft} Spots left</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="body-xs text-white/60">
+              <div className="flex items-center gap-2 sm:w-full sm:flex-col">
+                <div className="body-xs text-white/60 sm:w-full">
                   {(() => {
                     const now = new Date().getTime();
                     if (now > contest.endTime) {
                       return "Contest Ended";
                     }
                     return (
-                      <>
-                        {timeLefts[idx]?.isEnding ? "Ends in" : "Starts in"}
+                      <div className="sm:flex sm:justify-between sm:w-full">
+                        <span>
+                          {timeLefts[idx]?.isEnding ? "Ends in" : "Starts in"}
+                        </span>
                         <span className="heading-h6 ml-1.5 text-neutral-50">
                           {timeLefts[idx]?.time}
                         </span>
-                      </>
+                      </div>
                     );
                   })()}
                 </div>
-                <Button size="sm" iconRight={<ArrowRight />}>
+                <Button
+                  size="sm"
+                  className="sm:w-full"
+                  iconRight={<ArrowRight />}
+                >
                   {(() => {
                     const now = new Date().getTime();
-                    if (now > contest.endTime) {
-                      return "View More";
-                    } else if (now < contest.startTime) {
-                      return "View More";
-                    } else {
+                    if (now < contest.startTime) {
                       return `Enter with $${bnToUiAmount(
                         contest.entryFee,
                         6,
                         2
                       )}`;
+                    } else {
+                      return "View More";
                     }
                   })()}
                 </Button>

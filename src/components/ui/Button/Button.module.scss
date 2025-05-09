@@ -11,7 +11,7 @@
 }
 
 .sm {
-  @apply py-[8.5px] px-[17.5px] gap-1;
+  @apply py-[8.5px] px-[17.5px] gap-1 sm:py-2;
 }
 
 // Variants

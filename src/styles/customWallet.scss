@@ -9,6 +9,25 @@
   --wallet-adapter-button-font-weight: 600;
 }
 
+/* Responsive padding rules */
+@media screen and (max-width: 640px) {
+  :root {
+    --wallet-adapter-button-padding: 0.375rem 0.5rem;
+  }
+}
+
+@media screen and (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --wallet-adapter-button-padding: 0.4375rem 0.625rem;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  :root {
+    --wallet-adapter-button-padding: 0.5rem 0.75rem;
+  }
+}
+
 .wallet-adapter-button {
   all: unset;
   font-family: inherit !important;
@@ -27,9 +46,7 @@
   box-sizing: border-box;
 
   .wallet-adapter-button-start-icon {
-    margin-right: 0rem !important;
-    width: 1.25rem !important;
-    height: 1.25rem !important;
+    display: none;
   }
 }
 

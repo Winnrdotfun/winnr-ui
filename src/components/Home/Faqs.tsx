@@ -39,37 +39,37 @@ const faqs = [
           </li>
         </ul>
 
-        <ul className="list-disc pl-4 body-sm text-white/60 gap-0.5 flex flex-col mb-4">
+        {/* <ul className="list-disc pl-4 body-sm text-white/60 gap-0.5 flex flex-col mb-4">
           <li>Here is example, if contest is joined by 100 people:</li>
-        </ul>
+        </ul> */}
         {/* <Image src={PriceDistribution} alt="Prize" /> */}
       </>
     ),
   },
-  {
-    title: "FAQs",
-    content: (
-      <ul className="list-disc pl-4 body-sm text-white/60 gap-0.5 flex flex-col">
-        <li>Every player gets 100,000 Winnr Credits (simulated capital).</li>
-        <li>Use credits to draft a portfolio of eligible tokens.</li>
-        <li>When the contest starts, your picks are locked.</li>
-        <li>ROI is tracked in real time based on live token prices.</li>
-        <li>
-          After the contest ends, players are ranked by ROI (total return across
-          all picks).
-        </li>
-        <li>Top 50% win payouts based on their final ranking.</li>
-        <li>
-          📝 Tiebreaker: If two users have the same ROI, the one who joined
-          earlier ranks higher.
-        </li>
-      </ul>
-    ),
-  },
+  // {
+  //   title: "FAQs",
+  //   content: (
+  //     <ul className="list-disc pl-4 body-sm text-white/60 gap-0.5 flex flex-col">
+  //       <li>Every player gets 100,000 Winnr Credits (simulated capital).</li>
+  //       <li>Use credits to draft a portfolio of eligible tokens.</li>
+  //       <li>When the contest starts, your picks are locked.</li>
+  //       <li>ROI is tracked in real time based on live token prices.</li>
+  //       <li>
+  //         After the contest ends, players are ranked by ROI (total return across
+  //         all picks).
+  //       </li>
+  //       <li>Top 50% win payouts based on their final ranking.</li>
+  //       <li>
+  //         📝 Tiebreaker: If two users have the same ROI, the one who joined
+  //         earlier ranks higher.
+  //       </li>
+  //     </ul>
+  //   ),
+  // },
 ];
 const Faqs = () => {
   return (
-    <div className="w-full max-w-[321px] flex flex-col gap-4">
+    <div className="w-full max-w-[321px] flex flex-col gap-4 sm:max-w-full">
       {faqs.map((faq) => (
         <Accordion.Root type="single" collapsible key={faq.title}>
           <Accordion.Item value={faq.title}>

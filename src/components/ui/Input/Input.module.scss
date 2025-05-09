@@ -1,5 +1,5 @@
 .input {
-  @apply inline-block text-neutral-50 border p-2.5 text-sm border-white/10 rounded-xl w-full bg-transparent duration-300 appearance-none placeholder:text-neutral-500 ring-0 outline-none
+  @apply inline-block text-neutral-50 border p-2.5 text-sm border-white/10 rounded-[10px] w-full bg-transparent duration-300 appearance-none placeholder:text-neutral-500 ring-0 outline-none
   /* Focus State */
   focus:border-green-light focus-visible:outline-none focus:ring-0
   /* On focus uplift the component*/

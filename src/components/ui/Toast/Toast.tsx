@@ -2,9 +2,10 @@ import classNames from "classnames";
 import { FC } from "react";
 import styles from "./Toast.module.scss";
 import { ReactComponent as Success } from "@/src/assets/icons/success-filled.svg";
-import { ReactComponent as Error } from "@/src/assets/icons/error-filled.svg";
+import Error from "@/src/assets/icons/error-filled.svg";
 import { ReactComponent as Info } from "@/src/assets/icons/info.svg";
 import { ReactComponent as Warning } from "@/src/assets/icons/toast-warning.svg";
+import Image from "next/image";
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
   message: JSX.Element | string | null;
@@ -16,13 +17,13 @@ const Toast: FC<ToastProps> = ({ message, type, onClose, ...props }) => {
   return (
     <div className={classNames(styles.toast, styles[type], props.className)}>
       <div className="flex items-center gap-2">
-        <div className="w-4 h-4">
+        <div className="w-6 h-6">
           {type === "loading" ? (
             <Info />
           ) : type === "success" ? (
             <Success />
           ) : type === "error" ? (
-            <Error />
+            <Image src={Error} alt="error" width={24} height={24} />
           ) : (
             <Warning />
           )}

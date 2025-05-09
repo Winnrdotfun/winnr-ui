@@ -58,13 +58,45 @@ const ContestCardDetails = () => {
     contest?.startTime || new Date().getTime()
   );
 
-  useEffect(() => {
-    console.log(contest, "startPrices");
-  }, [contest]);
-
   const { data: currentPrices } = useGetLatestTokenPrices(
     contest?.tokenFeedIds || []
   );
+
+  const refreshContestData = async () => {
+    if (!pg || !params.slug || !wallet) return;
+
+    // Refresh contest data
+    const contestData = await getTokenDraftContestsByAddress(
+      pg,
+      params.slug as string
+    );
+    if (contestData) {
+      setContest(contestData);
+    }
+
+    // Refresh contest entry data
+    const entry = await getTokenDraftContestsEntry(pg, {
+      contestAddress: params.slug as string,
+      userAddress: wallet.publicKey.toBase58(),
+    });
+    if (entry) {
+      setContestEntry(entry);
+      // Refresh credit allocations
+      const entryAccount = await pg.account.tokenDraftContestEntry.fetch(
+        web3.PublicKey.findProgramAddressSync(
+          [
+            Buffer.from("token_draft_contest_entry"),
+            new web3.PublicKey(params.slug as string).toBuffer(),
+            wallet.publicKey.toBuffer(),
+          ],
+          pg.programId
+        )[0]
+      );
+      if (entryAccount) {
+        setCreditAllocations(Array.from(entryAccount.creditAllocation));
+      }
+    }
+  };
 
   useEffect(() => {
     if (pg && params.slug && wallet) {
@@ -133,6 +165,8 @@ const ContestCardDetails = () => {
     }
   }, [contest]);
 
+  const [isResolving, setIsResolving] = useState(false);
+
   if (!contest) {
     return <ContestCardDetailsLoading />;
   }
@@ -169,17 +203,18 @@ const ContestCardDetails = () => {
     if (!pg || !contest || !wallet) return;
 
     try {
-      const res = await postPricesAndResolveTokenDraftContest(
-        pg,
-        connection,
-        wallet,
-        {
-          contestAddress: contest.address,
-        }
-      );
-      console.log("Contest resolved successfully", res);
+      setIsResolving(true);
+      await postPricesAndResolveTokenDraftContest(pg, connection, wallet, {
+        contestAddress: contest.address,
+      });
+      // Refresh data after resolving
+      await refreshContestData();
+      showToast.success("Contest resolved successfully");
     } catch (error) {
       console.error("Error resolving contest", error);
+      showToast.error("Error resolving contest");
+    } finally {
+      setIsResolving(false);
     }
   };
 
@@ -190,6 +225,8 @@ const ContestCardDetails = () => {
       const res = await claimTokenDraftContestRewards(pg, connection, wallet, {
         contestAddress: contest.address,
       });
+      // Refresh data after claiming
+      await refreshContestData();
       showToast.success("Prize claimed successfully");
     } catch (error) {
       console.error("Error claiming prize", error);
@@ -207,7 +244,7 @@ const ContestCardDetails = () => {
     : new BN(0);
 
   return (
-    <div className="bg-neutral-950 p-6 border border-white/5 max-w-[362px] rounded-xl relative w-full">
+    <div className="bg-neutral-950 p-6 border border-white/5 max-w-[362px] sm:max-w-full rounded-xl relative w-full">
       <div className="mb-4">
         <div className="flex items-center justify-between gap-2">
           <h3 className="heading-h3 text-neutral-50">Draft &Win</h3>
@@ -274,13 +311,17 @@ const ContestCardDetails = () => {
           </div>
         </div>
 
-        <div className="bg-[#FFFFFF08] flex items-center gap-2 mb-2 rounded-xl p-3 justify-between">
-          <div className="flex items-center gap-2 heading-h6 text-white/60">
-            <Clock />
-            <span>Contest Ends in</span>
+        {!timeLeft?.isEnded && (
+          <div className="bg-[#FFFFFF08] flex items-center gap-2 mb-2 rounded-xl p-3 justify-between">
+            <div className="flex items-center gap-2 heading-h6 text-white/60">
+              <Clock />
+              <span>Contest Ends in</span>
+            </div>
+            <span className="heading-h6 text-green-light">
+              {timeLeft?.time}
+            </span>
           </div>
-          <span className="heading-h6 text-green-light">{timeLeft?.time}</span>
-        </div>
+        )}
         <div className="bg-[#FFFFFF08] flex flex-col gap-2 mb-2 rounded-xl p-3">
           <div className="flex items-center justify-between gap-2">
             <div className="heading-h6 text-white/60 flex items-center gap-1">
@@ -317,28 +358,30 @@ const ContestCardDetails = () => {
             <USDC className="w-4 h-4" />
           </div>
         </div>
-        {!isContestResolved && (
+        {!isContestResolved ? (
           <Button
             size="sm"
             iconRight={<ArrowRight />}
-            disabled={contestEntry?.hasClaimed}
+            disabled={contestEntry?.hasClaimed || isResolving}
             className="w-full mb-2"
             onClick={handleResolveContest}
+            isLoading={isResolving}
           >
-            Resolve Contest
+            {isResolving ? "Resolving..." : "Resolve Contest"}
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            iconRight={<ArrowRight />}
+            disabled={hasAlreadyClaimed || !isWinner}
+            className="w-full"
+            onClick={handleClaimPrize}
+          >
+            {!isWinner && "Better luck next time!"}
+            {!hasAlreadyClaimed && isWinner && "Claim Your Prize 🎉"}
+            {hasAlreadyClaimed && "Prize Claimed ✓"}
           </Button>
         )}
-        <Button
-          size="sm"
-          iconRight={<ArrowRight />}
-          disabled={hasAlreadyClaimed || !isWinner}
-          className="w-full"
-          onClick={handleClaimPrize}
-        >
-          {!isWinner && "No luck this time!"}
-          {!hasAlreadyClaimed && isWinner && "You won. Claim Prize"}
-          {hasAlreadyClaimed && "Already Claimed!"}
-        </Button>
       </div>
 
       <div className="mt-5">

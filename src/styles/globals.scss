@@ -11,7 +11,7 @@ body {
 }
 
 .container {
-  @apply px-5 max-w-[1000px] mx-auto;
+  @apply px-5 max-w-[1000px] mx-auto sm:px-4;
 }
 
 input[type="number"]::-webkit-inner-spin-button,

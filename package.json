@@ -31,9 +31,12 @@
     "postgres": "^3.4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.56.3",
     "react-hot-toast": "^2.5.2",
+    "react-otp-input": "^3.1.1",
     "rpc-websockets": "7.11.0",
-    "url-loader": "^4.1.1"
+    "url-loader": "^4.1.1",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

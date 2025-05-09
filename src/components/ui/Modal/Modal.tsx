@@ -33,7 +33,7 @@ const Modal: FC<ModalProps> = ({
         {open && (
           <Portal.Root>
             <div
-              className="relative z-40"
+              className="relative z-100"
               aria-labelledby="modal-title"
               role="dialog"
               aria-modal="true"
@@ -44,7 +44,7 @@ const Modal: FC<ModalProps> = ({
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={classNames(
-                    "fixed inset-0 bg-black/30 w-full h-full grid place-items-center overflow-auto sm:py-4 sm:px-0 p-8",
+                    "fixed inset-0 z-[100] bg-black/5 w-full h-full grid place-items-center overflow-auto backdrop-blur-md sm:py-4 sm:px-0 p-8",
                     rootClassName
                   )}
                 >
@@ -59,12 +59,7 @@ const Modal: FC<ModalProps> = ({
                   >
                     <div
                       className={classNames(
-                        "bg-white rounded-xl shadow-lg relative",
-                        {
-                          "sm:w-[90%] sm:max-w-[460px] w-[460px]":
-                            !isFullscreenModal,
-                          "h-full w-full": isFullscreenModal,
-                        },
+                        "bg-neutral-950 rounded-2xl border border-white/5 relative",
                         open ? "ease-out duration-300" : "ease-in duration-200",
                         className
                       )}

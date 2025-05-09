@@ -214,7 +214,28 @@ const ContestCardDetails = () => {
       });
       console.log("Contest joined successfully:", res);
       showToast.success("Contest joined successfully");
-      // Success message or redirect
+
+      // Refresh contest data
+      const updatedContest = await getTokenDraftContestsByAddress(
+        pg,
+        params.slug as string
+      );
+      if (updatedContest) {
+        setContest({
+          ...updatedContest,
+          winnerIds: updatedContest.winnerIds.map(String),
+        });
+      }
+
+      // Refresh entry data
+      const entry = await getTokenDraftContestsEntry(pg, {
+        contestAddress: params.slug as string,
+        userAddress: wallet.publicKey.toBase58(),
+      });
+      setHasJoined(!!entry);
+      if (entry) {
+        setCreditAllocations(entry.creditAllocation || []);
+      }
     } catch (error) {
       console.error("Error joining contest:", error);
       setError("Failed to join contest. Please try again.");
@@ -225,7 +246,7 @@ const ContestCardDetails = () => {
   };
 
   return (
-    <div className="bg-neutral-950 p-6 border border-white/5 max-w-[362px] rounded-xl relative w-full">
+    <div className="bg-neutral-950 p-6 border border-white/5 max-w-[362px] sm:max-w-full rounded-xl relative w-full">
       <div className="mb-4">
         <div className="flex items-center justify-between gap-2">
           <h3 className="heading-h3 text-neutral-50">Draft &Win</h3>
