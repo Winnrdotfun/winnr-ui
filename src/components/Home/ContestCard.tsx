@@ -13,6 +13,7 @@ import { useProgram } from "@/src/hooks/program";
 import { bnToUiAmount } from "@/src/utils/token";
 import { useEffect, useState } from "react";
 import ContentCardLoading from "@ui/Loading/ContentCardLoading";
+import { now } from "@/src/utils/time";
 
 interface Contest {
   address: string;
@@ -42,13 +43,16 @@ const ContestCard = () => {
   useEffect(() => {
     if (!pg) return;
 
+    const currentTime = now();
     getAllTokenDraftContests(pg!).then((res) => {
       if (res && res.length > 0) {
         setContests(
-          res.map((contestData) => ({
-            ...contestData,
-            winnerIds: contestData.winnerIds.map(String),
-          }))
+          res
+            .filter((contest) => currentTime < contest.endTime)
+            .map((contestData) => ({
+              ...contestData,
+              winnerIds: contestData.winnerIds.map(String),
+            }))
         );
       } else {
         setContests([]);
