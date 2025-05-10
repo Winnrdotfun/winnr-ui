@@ -44,12 +44,15 @@ const ContestCard = () => {
   const pg = useProgram();
   const wallet = useAnchorWallet();
   const [contests, setContests] = useState<ContestState[] | null>(null);
-  const [timeLeft, setTimeLeft] = useState<{
-    time: string;
-    isEnding: boolean;
-    isStarted: boolean;
-    isEnded: boolean;
-  } | null>(null);
+  const [timeLeftArr, setTimeLeftArr] = useState<
+    | {
+        time: string;
+        isEnding: boolean;
+        isStarted: boolean;
+        isEnded: boolean;
+      }[]
+    | null
+  >(null);
 
   useEffect(() => {
     if (pg && wallet) {
@@ -73,7 +76,7 @@ const ContestCard = () => {
   useEffect(() => {
     if (contests && contests.length > 0) {
       const interval = setInterval(() => {
-        contests.map((contest) => {
+        const timeLeftArr = contests.map((contest) => {
           const now = new Date().getTime();
           const startTime = contest.startTime;
           const endTime = contest.endTime;
@@ -93,18 +96,14 @@ const ContestCard = () => {
             0,
             Math.floor((distance % (1000 * 60)) / 1000)
           );
-          setTimeLeft({
+          return {
             time: `${hours}h : ${minutes}m : ${seconds}s`,
             isEnding,
             isStarted,
             isEnded,
-          });
-
-          return {
-            time: `${hours}h : ${minutes}m : ${seconds}s`,
-            isEnding: startTime <= now,
           };
         });
+        setTimeLeftArr(timeLeftArr);
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -133,7 +132,8 @@ const ContestCard = () => {
 
   return (
     <>
-      {contests.map((contest) => {
+      {contests.map((contest, i) => {
+        const timeLeft = timeLeftArr?.[i];
         return (
           <Link
             key={contest.id}
