@@ -9,6 +9,16 @@
   --wallet-adapter-button-font-weight: 600;
 }
 
+.w-full {
+  .wallet-adapter-dropdown {
+    width: 100%;
+
+    .wallet-adapter-button {
+      width: 100%;
+    }
+  }
+}
+
 /* Responsive padding rules */
 @media screen and (max-width: 640px) {
   :root {

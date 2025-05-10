@@ -207,9 +207,9 @@ const ContestCardDetails = () => {
       await postPricesAndResolveTokenDraftContest(pg, connection, wallet, {
         contestAddress: contest.address,
       });
+      showToast.success("Contest resolved successfully");
       // Refresh data after resolving
       await refreshContestData();
-      showToast.success("Contest resolved successfully");
     } catch (error) {
       console.error("Error resolving contest", error);
       showToast.error("Error resolving contest");
@@ -225,9 +225,9 @@ const ContestCardDetails = () => {
       const res = await claimTokenDraftContestRewards(pg, connection, wallet, {
         contestAddress: contest.address,
       });
+      showToast.success("Prize claimed successfully");
       // Refresh data after claiming
       await refreshContestData();
-      showToast.success("Prize claimed successfully");
     } catch (error) {
       console.error("Error claiming prize", error);
       showToast.error("Error claiming prize");
@@ -337,7 +337,7 @@ const ContestCardDetails = () => {
               {calculateTotalRoi().toFixed(2)}%
             </div>
           </div>
-          <div className="flex items-center justify-between gap-2">
+          {/* <div className="flex items-center justify-between gap-2">
             <div className="heading-h6 text-white/60 flex items-center gap-1">
               <Bars />
               <span>Your Rank</span>
@@ -345,7 +345,7 @@ const ContestCardDetails = () => {
             <div className="heading-h6 text-neutral-500">
               <span className="text-neutral-50">124</span>/11000
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="bg-[#FFFFFF08] flex items-center gap-2 mb-5 rounded-xl p-3 justify-between">

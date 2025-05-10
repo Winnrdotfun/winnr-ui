@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import postgres from "postgres";
 export const dynamic = "force-static";
 

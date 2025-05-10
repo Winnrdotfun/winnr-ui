@@ -1,13 +1,58 @@
-import { FC, useCallback } from "react";
-import { openModal } from "@ui/ModalsProvider";
+import { FC, useCallback, useState } from "react";
+import { closeModal, openModal } from "@ui/ModalsProvider";
 import InputOtp from "../ui/Input/InputOtp";
 import Button from "../ui/Button/Button";
 import { ReactComponent as ArrowRight } from "@/src/assets/icons/arrow-right.svg";
 import { ReactComponent as X } from "@/src/assets/icons/x.svg";
 import { ReactComponent as Telegram } from "@/src/assets/icons/telegram.svg";
 import Link from "next/link";
+import { useAnchorWallet } from "@solana/wallet-adapter-react";
+import { showToast } from "../ui/Toast/ToastProvider";
 
 const ModalInviteCode: FC = () => {
+  const wallet = useAnchorWallet();
+  const [inviteCode, setInviteCode] = useState("");
+
+  const handleSubmit = async () => {
+    if (!wallet) {
+      showToast.error("Please connect your wallet first");
+      return;
+    }
+
+    if (!inviteCode || inviteCode.length !== 4) {
+      showToast.error("Please enter a valid invite code");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/codes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inviteCode,
+          walletAddress: wallet.publicKey.toBase58(),
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+
+      const data = await response.json();
+      showToast.success("Successfully redeemed invite code!");
+      closeModal(ModalInviteCodeId);
+      window.location.reload();
+      // Close modal or handle success
+    } catch (error) {
+      showToast.error(
+        error instanceof Error ? error.message : "Failed to redeem invite code"
+      );
+    }
+  };
+
   return (
     <div className="py-4 px-3 text-center">
       <div className="pb-5 mb-5 border-b border-white/10">
@@ -17,6 +62,7 @@ const ModalInviteCode: FC = () => {
             Winnr is currently invite-only
           </p>
         </div>
+
         <div className="flex flex-col items-center mb-4">
           <label htmlFor="Enter Code" className="body-sm text-neutral-50 mb-2">
             Enter Code
@@ -24,20 +70,25 @@ const ModalInviteCode: FC = () => {
           <div className="max-w-[156px]">
             <InputOtp
               shouldAutoFocus
-              value="asas"
-              onChange={() => {}}
+              value={inviteCode}
+              onChange={setInviteCode}
               numInputs={4}
               renderInput={(props) => <input {...props} />}
             />
           </div>
         </div>
-        <Button className="w-full" size="sm" iconRight={<ArrowRight />}>
+        <Button
+          className="w-full"
+          size="sm"
+          iconRight={<ArrowRight />}
+          onClick={handleSubmit}
+        >
           Submit
         </Button>
       </div>
       <div>
         <h5 className="heading-h5 mb-1 text-neutral-50">
-          Don’t have invite code?
+          Don't have invite code?
         </h5>
         <p className="body-xs text-neutral-500 mb-4">
           Join our community, we will share more invites.

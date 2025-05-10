@@ -5,20 +5,11 @@ import { usePathname } from "next/navigation";
 import Logo from "@/src/assets/images/logo.svg";
 import { FC, Suspense, useEffect, useState } from "react";
 import USDC from "@/src/assets/icons/usdc.svg";
-import dynamic from "next/dynamic";
 import classNames from "classnames";
 import { getUsdcBalance } from "@/src/api/token/getUsdcBalance";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import Image from "next/image";
-import { useModalInviteCode } from "./ModalInviteCode";
-
-const WalletMultiButton = dynamic(
-  () =>
-    import("@solana/wallet-adapter-react-ui").then(
-      (mod) => mod.WalletMultiButton
-    ),
-  { ssr: false }
-);
+import WalletConnectButton from "./WalletConnectButton";
 
 const navList = [
   {
@@ -43,7 +34,6 @@ const ButtonGroup = ({ className }: { className?: string }) => {
   const { connection } = useConnection();
   const wallet = useAnchorWallet();
   const [usdcBalance, setUsdcBalance] = useState("0");
-  const { openModalInviteCode } = useModalInviteCode();
 
   useEffect(() => {
     if (!wallet || !connection) return;
@@ -54,10 +44,7 @@ const ButtonGroup = ({ className }: { className?: string }) => {
 
   return (
     <div className={classNames("flex", className)}>
-      <div
-        className="flex items-center gap-2 mx-2"
-        onClick={openModalInviteCode}
-      >
+      <div className="flex items-center gap-2 mx-2">
         <div className="text-neutral-50 heading-h5">{usdcBalance}</div>
         <Image src={USDC} alt="usdc" width={16} height={16} />
       </div>
@@ -66,7 +53,7 @@ const ButtonGroup = ({ className }: { className?: string }) => {
           <div className="h-10 w-40 bg-neutral-900 rounded-xl animate-pulse" />
         }
       >
-        <WalletMultiButton />
+        <WalletConnectButton />
       </Suspense>
     </div>
   );

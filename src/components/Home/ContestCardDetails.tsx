@@ -3,7 +3,7 @@
 import { ReactComponent as Dollar } from "@/src/assets/icons/dollar.svg";
 import { ReactComponent as Ticket } from "@/src/assets/icons/ticket.svg";
 import { ReactComponent as Candle } from "@/src/assets/icons/candle.svg";
-import { ReactComponent as Error } from "@/src/assets/icons/error.svg";
+import { ReactComponent as ErrorIcon } from "@/src/assets/icons/error.svg";
 import { ReactComponent as USDC } from "@/src/assets/icons/usdc.svg";
 import { ReactComponent as ArrowRight } from "@/src/assets/icons/arrow-right.svg";
 import ProgressBar from "../common/ProgressBar";
@@ -24,6 +24,8 @@ import { getTokenDraftContestsEntry } from "@/src/api/contest/getContestEntry";
 import { tokenInfos } from "@/src/config/tokens";
 import { useGetLatestTokenPrices } from "@/src/hooks/useGetLatestTokenPrices";
 import { showToast } from "../ui/Toast/ToastProvider";
+import WalletConnectButton from "../common/WalletConnectButton";
+import { useModalInviteCode } from "../common/ModalInviteCode";
 
 interface Contest {
   address: string;
@@ -94,6 +96,8 @@ const ContestCardDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasJoined, setHasJoined] = useState<boolean>(false);
+  const [hasInviteCode, setHasInviteCode] = useState<boolean | null>(null);
+  const { openModalInviteCode } = useModalInviteCode();
 
   const { data: startPrices } = useGetTokenPricesAtTimestamp(
     contest?.tokenFeedIds || [],
@@ -167,6 +171,42 @@ const ContestCardDetails = () => {
     }
   }, [contest]);
 
+  useEffect(() => {
+    const checkInviteCode = async () => {
+      if (!wallet?.publicKey) {
+        setHasInviteCode(false);
+        return;
+      }
+
+      const walletAddress = wallet.publicKey.toBase58();
+      if (!walletAddress) {
+        setHasInviteCode(false);
+        return;
+      }
+
+      const url = `/api/codes/${walletAddress}`;
+      console.log("Fetching invite code with URL:", url);
+
+      try {
+        const response = await fetch(url);
+        if (response.status === 404) {
+          setHasInviteCode(false);
+          return;
+        }
+        if (!response.ok) {
+          throw new Error("Failed to check invite code");
+        }
+        const data = await response.json();
+        setHasInviteCode(!!data.inviteCode);
+      } catch (error) {
+        console.error("Error checking invite code:", error);
+        setHasInviteCode(false);
+      }
+    };
+
+    checkInviteCode();
+  }, [wallet?.publicKey]);
+
   if (!contest) {
     return <ContestCardDetailsLoading />;
   }
@@ -208,11 +248,10 @@ const ContestCardDetails = () => {
     setIsLoading(true);
     try {
       const numTokens = contest.tokenFeedIds.length;
-      const res = await enterTokenDraftContest(pg, connection, wallet, {
+      await enterTokenDraftContest(pg, connection, wallet, {
         contestAddress: params.slug as string,
         creditAllocation: creditAllocations.slice(0, numTokens),
       });
-      console.log("Contest joined successfully:", res);
       showToast.success("Contest joined successfully");
 
       // Refresh contest data
@@ -366,7 +405,7 @@ const ContestCardDetails = () => {
 
         {error && (
           <div className="rounded-lg bg-red-light/10 p-2 flex items-center gap-2 body-xs text-red-light">
-            <Error />
+            <ErrorIcon />
             <span>{error}</span>
           </div>
         )}
@@ -375,17 +414,29 @@ const ContestCardDetails = () => {
           <div className="body-xs text-white/60 mb-3 text-center">
             {getTimeDisplay(timeLeft)}
           </div>
-          <Button
-            size="sm"
-            iconRight={<ArrowRight />}
-            className="w-full"
-            onClick={handleJoinContest}
-            disabled={
-              isLoading || error !== null || hasJoined || timeLeft?.isStarted
-            }
-          >
-            {getButtonText(isLoading, hasJoined, timeLeft)}
-          </Button>
+          {!wallet ? (
+            <WalletConnectButton className="w-full" />
+          ) : hasInviteCode !== true ? (
+            <Button
+              size="sm"
+              onClick={() => openModalInviteCode()}
+              className="w-full"
+            >
+              Enter Invite Code
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              iconRight={<ArrowRight />}
+              className="w-full"
+              onClick={handleJoinContest}
+              disabled={
+                isLoading || error !== null || hasJoined || timeLeft?.isStarted
+              }
+            >
+              {getButtonText(isLoading, hasJoined, timeLeft)}
+            </Button>
+          )}
         </div>
       </div>
     </div>

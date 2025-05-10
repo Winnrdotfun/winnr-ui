@@ -16,6 +16,7 @@ import { useAnchorWallet } from "@solana/wallet-adapter-react";
 import { BN } from "@coral-xyz/anchor";
 import NoContest from "./NoContest";
 import Status from "../ui/Status/Status";
+import WalletConnectButton from "../common/WalletConnectButton";
 
 interface Contest {
   address: string;
@@ -108,6 +109,19 @@ const ContestCard = () => {
       return () => clearInterval(interval);
     }
   }, [contests]);
+
+  if (!pg || !wallet) {
+    return (
+      <div className="bg-neutral-950 mb-5 border border-white/5 rounded-3xl min-h-[200px] p-10 relative w-full flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-5">
+          <div className="text-neutral-500">
+            Please connect your wallet to view your contests
+          </div>
+          <WalletConnectButton />
+        </div>
+      </div>
+    );
+  }
 
   if (!contests) {
     return <ContentCardLoading />;

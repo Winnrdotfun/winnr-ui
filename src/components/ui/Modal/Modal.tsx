@@ -33,7 +33,7 @@ const Modal: FC<ModalProps> = ({
         {open && (
           <Portal.Root>
             <div
-              className="relative z-100"
+              className="relative z-[100]"
               aria-labelledby="modal-title"
               role="dialog"
               aria-modal="true"
