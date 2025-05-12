@@ -1,5 +1,7 @@
 import postgres from "postgres";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: Request) {
   const connectionString = process.env.DATABASE_URL as string;
   const sql = postgres(connectionString);
