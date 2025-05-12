@@ -1,6 +1,4 @@
-import { NextResponse } from "next/server";
 import postgres from "postgres";
-export const dynamic = "force-static";
 
 const connectionString = process.env.DATABASE_URL as string;
 
