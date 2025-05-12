@@ -15,10 +15,10 @@ const faqs = [
           After the contest ends, players are ranked by ROI (total return across
           all picks).
         </li>
-        <li>
+        {/* <li>
           Top 50% win payouts based on their final ranking.Tiebreaker: If two
           users have the same ROI, the one who joined earlier ranks higher.
-        </li>
+        </li> */}
       </ol>
     ),
   },
@@ -30,9 +30,9 @@ const faqs = [
           <li>
             Winners are ranked by ROI. The top 50% of players receive payouts
             from the prize pool. <br />
-            <br />
+            {/* <br />
             💡 Note: All prizes are paid in real USDC, instantly to your wallet
-            after contest ends. <br />
+            after contest ends. <br /> */}
             <br />
             In case of tied ROI, the user who joined earlier gets the higher
             rank.
