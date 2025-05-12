@@ -1,9 +1,9 @@
 import postgres from "postgres";
 
-const connectionString = process.env.DATABASE_URL as string;
-
 export async function POST(request: Request) {
+  const connectionString = process.env.DATABASE_URL as string;
   const sql = postgres(connectionString);
+
   const params = await request.json();
 
   if (!validateParams(params)) {

@@ -1,8 +1,7 @@
 import postgres from "postgres";
 
-const connectionString = process.env.DATABASE_URL as string;
-
 export async function GET(request: Request) {
+  const connectionString = process.env.DATABASE_URL as string;
   const sql = postgres(connectionString);
 
   // Extract walletAddress from url
