@@ -70,12 +70,20 @@ const getButtonText = (
 };
 
 const getTimeDisplay = (
-  timeLeft: { isEnded: boolean; isEnding: boolean; time: string } | null
+  timeLeft: {
+    isEnded: boolean;
+    isEnding: boolean;
+    isStarted: boolean;
+    time: string;
+  } | null
 ) => {
   if (timeLeft?.isEnded) return "Contest Ended";
-  return `${timeLeft?.isEnding ? "Ends in" : "Starts in"} ${
-    !timeLeft?.isEnded ? timeLeft?.time : ""
-  }`;
+  else if (timeLeft?.isEnding) return "Ends in " + timeLeft?.time;
+  else if (timeLeft?.isStarted) return "Ends in " + timeLeft?.time;
+  else return "Starts in " + timeLeft?.time;
+  // return `${timeLeft?.isEnding ? "Ends in" : "Starts in"} ${
+  //   !timeLeft?.isEnded ? timeLeft?.time : ""
+  // }`;
 };
 
 const ContestCardDetails = () => {
