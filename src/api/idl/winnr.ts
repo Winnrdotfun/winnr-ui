@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/protocol.json`.
  */
 export type Protocol = {
-  address: "9bGeadnqYTmBhDTxA9KLLgiiY6k33fmsi1vm99AV23mE";
+  address: "3xA3kyUTzM9Pa24qSKQDdZmd9JoiD4UBAqJCsSckYeeZ";
   metadata: {
     name: "protocol";
     version: "0.1.0";
@@ -117,54 +117,13 @@ export type Protocol = {
           writable: true;
         },
         {
-          name: "escrowTokenAccount";
+          name: "programTokenAccount";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119,
-                  95,
-                  116,
-                  111,
-                  107,
-                  101,
-                  110,
-                  95,
-                  97,
-                  99,
-                  99,
-                  111,
-                  117,
-                  110,
-                  116
-                ];
-              },
-              {
-                kind: "account";
-                path: "mint";
-              }
-            ];
-          };
-        },
-        {
-          name: "feeTokenAccount";
-          writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: "const";
-                value: [
-                  102,
-                  101,
-                  101,
-                  95,
                   116,
                   111,
                   107,
@@ -379,6 +338,215 @@ export type Protocol = {
       ];
     },
     {
+      name: "delegateEr";
+      discriminator: [6, 254, 177, 190, 237, 234, 240, 201];
+      accounts: [
+        {
+          name: "signer";
+          writable: true;
+          signer: true;
+        },
+        {
+          name: "bufferContestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [98, 117, 102, 102, 101, 114];
+              },
+              {
+                kind: "account";
+                path: "contestMetadata";
+              }
+            ];
+          };
+        },
+        {
+          name: "delegationRecordContestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [100, 101, 108, 101, 103, 97, 116, 105, 111, 110];
+              },
+              {
+                kind: "account";
+                path: "contestMetadata";
+              }
+            ];
+            program: {
+              kind: "account";
+              path: "delegationProgram";
+            };
+          };
+        },
+        {
+          name: "delegationMetadataContestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              },
+              {
+                kind: "account";
+                path: "contestMetadata";
+              }
+            ];
+            program: {
+              kind: "account";
+              path: "delegationProgram";
+            };
+          };
+        },
+        {
+          name: "contestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  115,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              }
+            ];
+          };
+        },
+        {
+          name: "bufferContest";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [98, 117, 102, 102, 101, 114];
+              },
+              {
+                kind: "account";
+                path: "contest";
+              }
+            ];
+          };
+        },
+        {
+          name: "delegationRecordContest";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [100, 101, 108, 101, 103, 97, 116, 105, 111, 110];
+              },
+              {
+                kind: "account";
+                path: "contest";
+              }
+            ];
+            program: {
+              kind: "account";
+              path: "delegationProgram";
+            };
+          };
+        },
+        {
+          name: "delegationMetadataContest";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              },
+              {
+                kind: "account";
+                path: "contest";
+              }
+            ];
+            program: {
+              kind: "account";
+              path: "delegationProgram";
+            };
+          };
+        },
+        {
+          name: "contest";
+          writable: true;
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        },
+        {
+          name: "ownerProgram";
+          address: "3xA3kyUTzM9Pa24qSKQDdZmd9JoiD4UBAqJCsSckYeeZ";
+        },
+        {
+          name: "delegationProgram";
+          address: "DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh";
+        }
+      ];
+      args: [];
+    },
+    {
       name: "enterTokenDraftContest";
       discriminator: [221, 205, 54, 45, 132, 101, 251, 240];
       accounts: [
@@ -497,20 +665,13 @@ export type Protocol = {
           writable: true;
         },
         {
-          name: "escrowTokenAccount";
+          name: "programTokenAccount";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119,
-                  95,
                   116,
                   111,
                   107,
@@ -641,54 +802,13 @@ export type Protocol = {
           name: "mint";
         },
         {
-          name: "escrowTokenAccount";
+          name: "programTokenAccount";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119,
-                  95,
-                  116,
-                  111,
-                  107,
-                  101,
-                  110,
-                  95,
-                  97,
-                  99,
-                  99,
-                  111,
-                  117,
-                  110,
-                  116
-                ];
-              },
-              {
-                kind: "account";
-                path: "mint";
-              }
-            ];
-          };
-        },
-        {
-          name: "feeTokenAccount";
-          writable: true;
-          pda: {
-            seeds: [
-              {
-                kind: "const";
-                value: [
-                  102,
-                  101,
-                  101,
-                  95,
                   116,
                   111,
                   107,
@@ -762,6 +882,34 @@ export type Protocol = {
       args: [];
     },
     {
+      name: "processUndelegation";
+      discriminator: [196, 28, 41, 206, 48, 37, 51, 167];
+      accounts: [
+        {
+          name: "baseAccount";
+          writable: true;
+        },
+        {
+          name: "buffer";
+        },
+        {
+          name: "payer";
+          writable: true;
+        },
+        {
+          name: "systemProgram";
+        }
+      ];
+      args: [
+        {
+          name: "accountSeeds";
+          type: {
+            vec: "bytes";
+          };
+        }
+      ];
+    },
+    {
       name: "resolveTokenDraftContest";
       discriminator: [23, 163, 216, 115, 121, 154, 219, 234];
       accounts: [
@@ -769,6 +917,35 @@ export type Protocol = {
           name: "signer";
           writable: true;
           signer: true;
+        },
+        {
+          name: "contestMetadata";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
+                  99,
+                  111,
+                  110,
+                  116,
+                  101,
+                  115,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              }
+            ];
+          };
         },
         {
           name: "contest";
@@ -819,6 +996,42 @@ export type Protocol = {
           };
         },
         {
+          name: "feed0";
+          optional: true;
+        },
+        {
+          name: "feed1";
+          optional: true;
+        },
+        {
+          name: "feed2";
+          optional: true;
+        },
+        {
+          name: "feed3";
+          optional: true;
+        },
+        {
+          name: "feed4";
+          optional: true;
+        },
+        {
+          name: "systemProgram";
+          address: "11111111111111111111111111111111";
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "resolveTokenDraftContestEr";
+      discriminator: [172, 55, 224, 96, 145, 52, 191, 128];
+      accounts: [
+        {
+          name: "signer";
+          writable: true;
+          signer: true;
+        },
+        {
           name: "contestMetadata";
           writable: true;
           pda: {
@@ -848,58 +1061,65 @@ export type Protocol = {
           };
         },
         {
-          name: "mint";
+          name: "contest";
           writable: true;
         },
         {
-          name: "escrowTokenAccount";
+          name: "contestCredits";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
-                  101,
-                  115,
-                  99,
-                  114,
-                  111,
-                  119,
-                  95,
                   116,
                   111,
                   107,
                   101,
                   110,
                   95,
+                  100,
+                  114,
                   97,
-                  99,
+                  102,
+                  116,
+                  95,
                   99,
                   111,
-                  117,
                   110,
-                  116
+                  116,
+                  101,
+                  115,
+                  116,
+                  95,
+                  99,
+                  114,
+                  101,
+                  100,
+                  105,
+                  116,
+                  115
                 ];
               },
               {
                 kind: "account";
-                path: "mint";
+                path: "contest";
               }
             ];
           };
         },
         {
-          name: "feeTokenAccount";
+          name: "mint";
+          writable: true;
+        },
+        {
+          name: "programTokenAccount";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
-                  102,
-                  101,
-                  101,
-                  95,
                   116,
                   111,
                   107,
@@ -948,6 +1168,15 @@ export type Protocol = {
         {
           name: "systemProgram";
           address: "11111111111111111111111111111111";
+        },
+        {
+          name: "magicProgram";
+          address: "Magic11111111111111111111111111111111111111";
+        },
+        {
+          name: "magicContext";
+          writable: true;
+          address: "MagicContext1111111111111111111111111111111";
         }
       ];
       args: [];
@@ -973,17 +1202,46 @@ export type Protocol = {
           };
         },
         {
-          name: "feeTokenAccount";
+          name: "contestMetadata";
           writable: true;
           pda: {
             seeds: [
               {
                 kind: "const";
                 value: [
-                  102,
+                  99,
+                  111,
+                  110,
+                  116,
                   101,
-                  101,
+                  115,
+                  116,
                   95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ];
+              }
+            ];
+          };
+        },
+        {
+          name: "mint";
+          writable: true;
+        },
+        {
+          name: "programTokenAccount";
+          writable: true;
+          pda: {
+            seeds: [
+              {
+                kind: "const";
+                value: [
                   116,
                   111,
                   107,
@@ -1001,18 +1259,13 @@ export type Protocol = {
               },
               {
                 kind: "account";
-                path: "config.mint";
-                account: "config";
+                path: "mint";
               }
             ];
           };
         },
         {
           name: "withdrawalTokenAccount";
-          writable: true;
-        },
-        {
-          name: "mint";
           writable: true;
         },
         {
@@ -1151,6 +1404,10 @@ export type Protocol = {
           {
             name: "tokenDraftContestFeePercent";
             type: "u8";
+          },
+          {
+            name: "tokenDraftContestFeeAmount";
+            type: "u64";
           }
         ];
       };

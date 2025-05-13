@@ -2,12 +2,7 @@ import { Program, utils, web3 } from "@coral-xyz/anchor";
 import { AnchorWallet } from "@solana/wallet-adapter-react";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import type { Protocol as IWinner } from "../idl/winnr";
-import {
-  configPda,
-  escrowTokenAccountPda,
-  feeTokenAccountPda,
-  mint,
-} from "../utils";
+import { configPda, mint, programTokenAccountPda } from "../utils";
 
 const { PublicKey } = web3;
 
@@ -44,8 +39,7 @@ export const enterTokenDraftContest = async (
     contestEntry: contestEntryPda,
     contestCredits: contestCreditsPda,
     mint,
-    escrowTokenAccount: escrowTokenAccountPda,
-    feeTokenAccount: feeTokenAccountPda,
+    programTokenAccount: programTokenAccountPda,
     signerTokenAccount: signerTokenAccountAddress,
     tokenProgram: utils.token.TOKEN_PROGRAM_ID,
   };

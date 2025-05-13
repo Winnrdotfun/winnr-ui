@@ -16,12 +16,7 @@ export const [contestMetadataPda] = web3.PublicKey.findProgramAddressSync(
   programId
 );
 
-export const [escrowTokenAccountPda] = web3.PublicKey.findProgramAddressSync(
-  [Buffer.from("escrow_token_account"), mint.toBuffer()],
-  programId
-);
-
-export const [feeTokenAccountPda] = web3.PublicKey.findProgramAddressSync(
-  [Buffer.from("fee_token_account"), mint.toBuffer()],
+export const [programTokenAccountPda] = web3.PublicKey.findProgramAddressSync(
+  [Buffer.from("token_account"), mint.toBuffer()],
   programId
 );

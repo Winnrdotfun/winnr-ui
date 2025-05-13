@@ -4,10 +4,9 @@ import type { Protocol as IWinner } from "../idl/winnr";
 import {
   configPda,
   contestMetadataPda,
-  escrowTokenAccountPda,
-  feeTokenAccountPda,
   mint,
   programId,
+  programTokenAccountPda,
 } from "../utils";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
@@ -43,8 +42,7 @@ export const claimTokenDraftContestRewards = async (
     contestMetadata: contestMetadataPda,
     contestEntry: contestEntryPda,
     mint,
-    escrowTokenAccount: escrowTokenAccountPda,
-    feeTokenAccount: feeTokenAccountPda,
+    programTokenAccount: programTokenAccountPda,
     signerTokenAccount: signerTokenAccountAddress,
     tokenProgram: utils.token.TOKEN_PROGRAM_ID,
   };

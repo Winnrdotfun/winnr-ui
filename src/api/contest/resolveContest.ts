@@ -6,12 +6,7 @@ import {
   InstructionWithEphemeralSigners,
   PythSolanaReceiver,
 } from "@pythnetwork/pyth-solana-receiver";
-import {
-  contestMetadataPda,
-  escrowTokenAccountPda,
-  feeTokenAccountPda,
-  mint,
-} from "../utils";
+import { contestMetadataPda, mint, programTokenAccountPda } from "../utils";
 import { getPostTokenDraftContestPricesTransaction } from "./postContestPrices";
 
 const { PublicKey } = web3;
@@ -124,8 +119,7 @@ export const getResolveTokenDraftContestTransaction = async (
         contestCredits: contestCreditsPda,
         contestMetadata: contestMetadataPda,
         mint,
-        escrowTokenAccount: escrowTokenAccountPda,
-        feeTokenAccount: feeTokenAccountPda,
+        programTokenAccount: programTokenAccountPda,
         feed0: priceUpdateAccounts[0],
         feed1: priceUpdateAccounts[1] || null,
         feed2: priceUpdateAccounts[2] || null,
