@@ -1,3 +1,5 @@
 # Winnr App
 
-Repo for Winnr web app
+Winnr web app.
+
+See more at [winnr.fun](https://winnr.fun).
