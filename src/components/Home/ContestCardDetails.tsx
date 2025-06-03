@@ -25,7 +25,6 @@ import { tokenInfos } from "@/src/config/tokens";
 import { useGetLatestTokenPrices } from "@/src/hooks/useGetLatestTokenPrices";
 import { showToast } from "../ui/Toast/ToastProvider";
 import WalletConnectButton from "../common/WalletConnectButton";
-import { useModalInviteCode } from "../common/ModalInviteCode";
 
 interface Contest {
   address: string;
@@ -104,8 +103,6 @@ const ContestCardDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasJoined, setHasJoined] = useState<boolean>(false);
-  const [hasInviteCode, setHasInviteCode] = useState<boolean | null>(null);
-  const { openModalInviteCode } = useModalInviteCode();
 
   const { data: startPrices } = useGetTokenPricesAtTimestamp(
     contest?.tokenFeedIds || [],
@@ -178,42 +175,6 @@ const ContestCardDetails = () => {
       return () => clearInterval(interval);
     }
   }, [contest]);
-
-  useEffect(() => {
-    const checkInviteCode = async () => {
-      if (!wallet?.publicKey) {
-        setHasInviteCode(false);
-        return;
-      }
-
-      const walletAddress = wallet.publicKey.toBase58();
-      if (!walletAddress) {
-        setHasInviteCode(false);
-        return;
-      }
-
-      const url = `/api/codes/${walletAddress}`;
-      console.log("Fetching invite code with URL:", url);
-
-      try {
-        const response = await fetch(url);
-        if (response.status === 404) {
-          setHasInviteCode(false);
-          return;
-        }
-        if (!response.ok) {
-          throw new Error("Failed to check invite code");
-        }
-        const data = await response.json();
-        setHasInviteCode(!!data.inviteCode);
-      } catch (error) {
-        console.error("Error checking invite code:", error);
-        setHasInviteCode(false);
-      }
-    };
-
-    checkInviteCode();
-  }, [wallet?.publicKey]);
 
   if (!contest) {
     return <ContestCardDetailsLoading />;
@@ -424,14 +385,6 @@ const ContestCardDetails = () => {
           </div>
           {!wallet ? (
             <WalletConnectButton className="w-full" />
-          ) : hasInviteCode !== true ? (
-            <Button
-              size="sm"
-              onClick={() => openModalInviteCode()}
-              className="w-full"
-            >
-              Enter Invite Code
-            </Button>
           ) : (
             <Button
               size="sm"
